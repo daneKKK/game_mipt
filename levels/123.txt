@@ -1,0 +1,3 @@
+Spider 10 10
+Wall 15 15
+Walls 10 10 0 0
