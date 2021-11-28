@@ -26,6 +26,8 @@ class Level:
             for obj in object_list:
                 if obj.point_in_obj(current_point):
                     return False
+        return not (abs(x1 - x_border // 2) > x_border or abs(y1 - x_border // 2) > y_border
+                    or abs(x2 - x_border // 2) > x_border or abs(y2 - x_border // 2) > y_border)
         return True
 
 #Подход к объектам: в целях упрощения просчёта столкновений объектов сделаем их
@@ -95,6 +97,7 @@ class SkeletArcher(Entity):
         new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.angle)
         new_arrow.y = self.y + (self.r + 0.02) * math.cos(self.angle)
         new_arrow.angle = self.angle
+        new_arrow.damage = self.damage
         obj_list += [new_arrow]
         return obj_list, player
 
@@ -124,6 +127,24 @@ class Sword(Weapon):
                 i.get_damage(attack_value)
         return obj_list
     
+class Arrow:
+    x = 0
+    y = 0
+    angle = 0
+    damage = 1
+    speed = 3
+
+    def move(self, angle, level):
+        old_x = self.x
+        old_y = self.y
+        new_x = self.x + speed * math.cos(angle)
+        new_y = self.y + speed * math.sin(angle)
+        if not level.line_of_sight((new_x, new_y), (self.x, self.y)):
+            level.obj_list.remove(self)
+            return
+        self.x = new_x
+        self.y = new_y
+
 class ImmovableObject():
     living = False
     x = 0
