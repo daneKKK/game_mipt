@@ -70,22 +70,20 @@ def read_spider_data(line, spider,spider_number):
     pass
 
 
-def read_skelet_data(line, skelet):
+def read_skelet_data(line, skelet, skelet_number):
     '''
     Skelet <x> <y>
     s - кол-во скелетов в файле
     '''
-    skelet_number = rnd(1,s)
     skelet.x = obj[skelet_number][1]
     skelet.y = obj[skelet_number][2]
     pass
 
-def read_wall_data(line,wall):
+def read_wall_data(line,wall,wall_number):
     '''
     Wall <x> <y>
     s - кол-во стен в файле
     '''
-    wall_number = rnd(1, s)
     wall.x = obj[wall_number][1]
     wall.y = obj[wall_number][2]
     pass
