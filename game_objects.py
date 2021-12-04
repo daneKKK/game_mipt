@@ -96,6 +96,9 @@ class Entity:
         '''
         facing_angle = angle
 
+    def draw(self, screen):
+        pass
+
 class Spider(Entity):
     '''
     Класс Паук. Наследует от Entity
@@ -223,6 +226,9 @@ class Arrow:
                 player.get_damage(self.damage)
                 obj_list.remove(self)
         return obj_list, player
+
+    def draw(self, screen):
+        pass
             
 class ImmovableObject():
     '''
@@ -240,3 +246,6 @@ class ImmovableObject():
         return ((0 <= x - self.x) and (x - self.x <= size) and
                 (0 <= y - self.y) and (y - self.y <= size))
 
+
+    def draw(self, screen):
+        pass
