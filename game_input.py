@@ -29,24 +29,24 @@ def read_level_objects_data(filename):
     level = read(filemane)
     level_object = Level()
     for obj in level:
-        if obj == level['spiders']:
+        if obj == 'spiders':
             while i_spider < 5:
                 spider = Spiders()
-                read_spider_data(obj, spider)
+                read_spider_data(level[obj], spider)
                 level_object.obj_list.append(spider)
                 spider_number = 4 - i_spider
                 i_spider += 1
-        if obj == level['skelets']:
+        if obj == 'skelets':
             while i_skelet < 5:
                 skelet = Skelet()
-                read_skelet_data(obj, skelet)
+                read_skelet_data(level[obj], skelet)
                 level_object.obj_list.append(skelet)
                 skelet_number = 4 - i_skelet
                 i_skelet += 1
-        if obj == level['walls']:
+        if obj == 'walls':
             while i_wall < 5:
                 wall = Wall()
-                read_wall_data(obj, wall)
+                read_wall_data(level[obj], wall)
                 level_object.obj_list.append(wall)
                 wall_number = 4 -i_wall
                 i_wall += 1
@@ -95,23 +95,8 @@ def save_data(levels, character, filename):
     #Level 2: list = ...
     #...
     #Character: [health, gold, weapon]
-    data = {
-        'level 1':{
-            'spiders': [],
-            'skelets': [],
-            'walls': []
-        },
-        'level 2':{
-            'spiders':[],
-            'skelets':[],
-            'walls':[]
-        },
-        'character':{
-            'health': health ,
-            'gold': gold,
-            'weapon': [sword,arrow]
-        }
-    }
+    data = [i.toJSON() for i in levels]
+    data += [character.toJSON()]
     write(data, filename)
 
 
@@ -119,22 +104,10 @@ def load_data(filename):
     #распакуй мне [name].json в переменную list_of_objects_and_character
     #list_of_objects_and_character[последний индекс] = character
     #return list...
-    load = read('Saves.json')
-    list_of_objects_and_character = []
-    for obj in load:
-        if obj == load['character']:
-            character = Player()
-            character.health = load['character'][0]
-            character.x = load['character'][1]
-            character.y = load['character'][2]
-            character.gold = load['çharacter'][3]
-            character.weapon = load['çharacter'][4]
-            return character
-        if obj in load:
-            if obj == load['level 1']:
-                spiders = list[load['level 1']['spiders'][1],load['level 1']['spiders'][2]]
-                skelets = list[load['level 1']['skelets'][1],load['level 1']['sketets'][2]]
-                walls = list[load['level 1']['walls'][1],load['level 1']['walls'][2]]
+    data = read(filename)
+    levels = [data[i] for i in range(len(data)) if i < len(data) - 1]
+    character = data[len(data) - 1]
+    return levels, character
 
 
 
