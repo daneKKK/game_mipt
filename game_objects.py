@@ -108,14 +108,16 @@ class Spider(Entity):
     '''
     Класс Паук. Наследует от Entity
     '''
+    type = "spider"
     texture = None
 
 
 
-class SkeletArcher(Entity):
+class Skelet(Entity):
     '''
     Скелет-лучник. Наследует от Entity. Атакует издалека.
     '''
+    type = "skelet"
     health = 15
     speed = 1
     attack_value = 2
@@ -193,6 +195,7 @@ class Arrow:
     '''
     Стрела.
     '''
+    type = "arrow"
     x = 0
     y = 0
     angle = 0
@@ -260,3 +263,7 @@ class ImmovableObject():
 
     def draw(self, screen):
         pass
+
+class Wall(ImmovableObject):
+    living = False
+    type = "wall"
