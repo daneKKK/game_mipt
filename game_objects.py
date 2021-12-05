@@ -1,4 +1,4 @@
-import math
+import math, json
 
 #Этот файл хранит информацию о всех классах
 
@@ -10,7 +10,7 @@ class Level:
     x_border = 20
     y_border = 20
     
-    object_list = []
+    obj_list = []
 
     def line_of_sight(self, pos1, pos2):
         '''
@@ -29,6 +29,11 @@ class Level:
         return not (abs(x1 - x_border // 2) > x_border or abs(y1 - x_border // 2) > y_border
                     or abs(x2 - x_border // 2) > x_border or abs(y2 - x_border // 2) > y_border)
         return True
+
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
 #Подход к объектам: в целях упрощения просчёта столкновений объектов сделаем их
 #минимальный размер, равный 0.5
@@ -131,18 +136,6 @@ class SkeletArcher(Entity):
         obj_list += [new_arrow]
         return obj_list, player
 
-class Player(Entity):
-    '''
-    Класс игрока. Наследует от Entity. Подразумевается, что может менять оружие
-    через переменную weapon.
-    '''
-    weapon = Sword()
-    def attack(self, attack_position, obj_list):
-        '''
-        Атака через оружие игрока
-        '''
-        return self.weapon.attack(attack_postion, obj_list):
-
 class Weapon:
     '''
     Класс оружия.
@@ -177,6 +170,24 @@ class Sword(Weapon):
             if i.point_in_obj(attacked_pos):
                 i.get_damage(self.attack_value)
         return obj_list
+
+
+class Player(Entity):
+    '''
+    Класс игрока. Наследует от Entity. Подразумевается, что может менять оружие
+    через переменную weapon.
+    '''
+    weapon = Sword()
+    def attack(self, attack_position, obj_list):
+        '''
+        Атака через оружие игрока
+        '''
+        return self.weapon.attack(attack_postion, obj_list)
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
     
 class Arrow:
     '''
