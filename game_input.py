@@ -2,6 +2,7 @@
 import json
 from random import randint as rnd
 
+from game_objects import *
 
 def read(filename):
     with open(filename, 'r') as file:
@@ -22,33 +23,35 @@ def read_level_objects_data(filename):
     скелетов и стены, засовывает их в общий список объектов
     '''
 
-    i_spider = rnd(0, 4)
-    i_skelet = rnd(0, 3)
-    i_wall = rnd(0, 3)
-    #level.object_list += [spider, wall]
-    level = read(filemane)
+    spider_amount = rnd(0, 4)
+    skelet_amount = rnd(0, 3)
+    wall_amount = rnd(0, 3)
+
+    i_spider = 0
+    i_skelet = 0
+    i_wall = 0
+    
+    level = read(filename)
     level_object = Level()
     for obj in level:
         if obj == 'spiders':
-            while i_spider < 5:
-                spider = Spiders()
-                read_spider_data(level[obj], spider)
+            while i_spider < spider_amount:
+                spider = Spider()
+                read_spider_data(level[obj], spider, i_spider)
                 level_object.obj_list.append(spider)
-                spider_number = 4 - i_spider
                 i_spider += 1
         if obj == 'skelets':
-            while i_skelet < 5:
+            while i_skelet < skelet_amount:
                 skelet = Skelet()
-                read_skelet_data(level[obj], skelet)
+                read_skelet_data(level[obj], skelet, i_skelet)
                 level_object.obj_list.append(skelet)
-                skelet_number = 4 - i_skelet
                 i_skelet += 1
         if obj == 'walls':
-            while i_wall < 5:
+            while i_wall < wall_amount:
                 wall = Wall()
-                read_wall_data(level[obj], wall)
+                wall_number = 4 - i_wall
+                read_wall_data(level[obj], wall, i_wall)
                 level_object.obj_list.append(wall)
-                wall_number = 4 -i_wall
                 i_wall += 1
 
     return level_object
@@ -64,8 +67,8 @@ def read_spider_data(line, spider,spider_number):
     Spider <x> <y>
     s - кол-во пауков в файле
     '''
-    spider.x = obj[spider_number][1]
-    spider.y = obj[spider_number][2]
+    spider.x = line[spider_number][0]
+    spider.y = line[spider_number][1]
     
     pass
 
@@ -75,8 +78,8 @@ def read_skelet_data(line, skelet, skelet_number):
     Skelet <x> <y>
     s - кол-во скелетов в файле
     '''
-    skelet.x = obj[skelet_number][1]
-    skelet.y = obj[skelet_number][2]
+    skelet.x = line[skelet_number][0]
+    skelet.y = line[skelet_number][1]
     pass
 
 def read_wall_data(line,wall,wall_number):
@@ -84,8 +87,8 @@ def read_wall_data(line,wall,wall_number):
     Wall <x> <y>
     s - кол-во стен в файле
     '''
-    wall.x = obj[wall_number][1]
-    wall.y = obj[wall_number][2]
+    wall.x = line[wall_number][0]
+    wall.y = line[wall_number][1]
     pass
 
 
