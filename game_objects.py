@@ -46,12 +46,16 @@ class Entity:
     y = 0
     r = 0.5
     health = 10
-    speed = 1
+    speed = 0.1
     facing_angle = 0
     attack_value = 1
     attack_speed = 30
     living = True
     texture = None
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
     def attack(self, attacked_pos, obj_list, player):
         '''
@@ -77,15 +81,15 @@ class Entity:
         '''
         x, y = point
         distance = (x - self.x) ** 2 + (y - self.y) ** 2
-        return distance <= r * r
+        return distance <= self.r * self.r
 
     def move(self, angle):
         '''
         Передвижение по направлению на угол angle
         angle - угол в радианах
         '''
-        self.x += speed * math.cos(angle)
-        self.y += speed * math.sin(angle)
+        self.x += self.speed * math.cos(angle)
+        self.y += self.speed * math.sin(angle)
 
     def get_damage(self, attack):
         '''
@@ -142,7 +146,7 @@ class Weapon:
     '''
     Класс оружия.
     '''
-    damage = 1
+    attack_value = 1
     reach = 1.5
     def attack(self, attack_position, obj_list):
         '''
@@ -153,7 +157,7 @@ class Weapon:
         for i in obj_list:
             if self == i or not i.living:
                 continue
-            if i.point_in_obj(attacked_pos):
+            if i.point_in_obj(attack_position):
                 i.get_damage(attack_value)
         return obj_list
         
@@ -169,7 +173,8 @@ class Sword(Weapon):
         for i in obj_list:
             if self == i or not i.living:
                 continue
-            if i.point_in_obj(attacked_pos):
+            if i.point_in_obj(attack_position):
+                print(i)
                 i.get_damage(self.attack_value)
         return obj_list
 
@@ -184,7 +189,7 @@ class Player(Entity):
         '''
         Атака через оружие игрока
         '''
-        return self.weapon.attack(attack_postion, obj_list)
+        return self.weapon.attack(attack_position, obj_list)
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
@@ -261,8 +266,9 @@ class ImmovableObject():
                 (0 <= y - self.y) and (y - self.y <= size))
 
 
-    def draw(self, screen):
-        pass
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
 class Wall(ImmovableObject):
     living = False
