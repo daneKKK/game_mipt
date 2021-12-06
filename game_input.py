@@ -33,24 +33,21 @@ def read_level_objects_data(filename):
     
     level = read(filename)
     level_object = Level()
+    level_object.obj_list = []
     for obj in level:
         if obj == 'spiders':
             while i_spider < spider_amount:
-                spider = Spider()
-                read_spider_data(level[obj], spider, i_spider)
+                spider =read_spider_data(level[obj], i_spider)
                 level_object.obj_list.append(spider)
                 i_spider += 1
         if obj == 'skelets':
             while i_skelet < skelet_amount:
-                skelet = Skelet()
-                read_skelet_data(level[obj], skelet, i_skelet)
+                skelet =read_skelet_data(level[obj], i_skelet)
                 level_object.obj_list.append(skelet)
                 i_skelet += 1
         if obj == 'walls':
             while i_wall < wall_amount:
-                wall = Wall()
-                wall_number = 4 - i_wall
-                read_wall_data(level[obj], wall, i_wall)
+                wall = read_wall_data(level[obj], i_wall)
                 level_object.obj_list.append(wall)
                 i_wall += 1
 
@@ -60,36 +57,40 @@ def read_level_objects_data(filename):
 
 
 
-def read_spider_data(line, spider,spider_number):
+def read_spider_data(line, spider_number):
     '''
     Пример:
     Spider 10 10
     Spider <x> <y>
     s - кол-во пауков в файле
     '''
-    spider.x = line[spider_number][0]
-    spider.y = line[spider_number][1]
     
-    pass
+    #spider.id = rnd(0, 15000)
+    x = line[spider_number][0]
+    y = line[spider_number][1]
+    return Spider(x, y)
+    
 
 
-def read_skelet_data(line, skelet, skelet_number):
+def read_skelet_data(line, skelet_number):
     '''
     Skelet <x> <y>
     s - кол-во скелетов в файле
     '''
-    skelet.x = line[skelet_number][0]
-    skelet.y = line[skelet_number][1]
-    pass
+    #skelet.id = rnd(0, 15000)
+    x = line[skelet_number][0]
+    y = line[skelet_number][1]
+    return Skelet(x, y)
 
-def read_wall_data(line,wall,wall_number):
+def read_wall_data(line, wall_number):
     '''
     Wall <x> <y>
     s - кол-во стен в файле
     '''
-    wall.x = line[wall_number][0]
-    wall.y = line[wall_number][1]
-    pass
+    #wall.id = rnd(0, 15000)
+    x = line[wall_number][0]
+    y = line[wall_number][1]
+    return Wall(x, y)
 
 
 def save_data(levels, character, filename):
