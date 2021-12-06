@@ -16,6 +16,7 @@ levels = []
 player = []
 current_level_index = 0
 isOpened = False
+attackedAlready = False
 
 #Жива ли программа
 alive = True
@@ -39,11 +40,21 @@ def checkPlayerOnLevel():
     global levels
     if player.x >= 9.5 and player.x <= 10.5 and player.y >= 19:
         current_level_index += 1
+        player.y = 1.01
     if player.x >= 9.5 and player.x <= 10.5 and player.y <= 1:
         if current_level_index > 0:
             current_level_index -= 1
+            player.y = 18.99
     if current_level_index + 1 > len(levels):
         createNewLevel()
+    if player.x >= 20 - player.r:
+        player.x = 20 - player.r
+    if player.x <= player.r:
+        player.x = player.r
+    if player.y >= 20 - player.r:
+        player.y = 20 - player.r
+    if player.y <= player.r:
+        player.y = player.r
 
     
 
@@ -62,9 +73,7 @@ def setPlayer():
     '''
     global player
 
-    player = Player()
-    player.x = 10
-    player.y = 1
+    player = Player(10, 1)
 
 def entity_ai():
     '''
@@ -72,9 +81,11 @@ def entity_ai():
     '''
     global timer
     global player
-    global level
+    global levels
     global current_level_index
-    pass
+    for i in levels[current_level_index].obj_list:
+        if i.living and i.health <= 0:
+            levels[current_level_index].obj_list.remove(i)
 
 def main():
     global levels
@@ -109,7 +120,23 @@ def main():
                     alive = False
                     pg.quit()
                 elif event.key == pg.K_f:
-                    print(levels[current_level_index].obj_list)
+                    print(levels[current_level_index])
+            elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
+                print(event.pos)
+                print(((event.pos[0] - 20) / 760 * 20, (event.pos[1] - 20)/760 * 20))
+                new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
+                                         (event.pos[1] - 20)/760 * 20),
+                                        levels[current_level_index].obj_list)
+                levels[current_level_index].obj_list = new_obj
+                    
+        if pg.key.get_pressed()[pg.K_s]:
+            player.move(math.pi/2)
+        if pg.key.get_pressed()[pg.K_w]:
+            player.move(-math.pi/2)
+        if pg.key.get_pressed()[pg.K_d]:
+            player.move(0)
+        if pg.key.get_pressed()[pg.K_a]:
+            player.move(math.pi)
 
         for i in levels[current_level_index].obj_list:
             if i.living:
@@ -124,7 +151,8 @@ def main():
 
         timer += 1
         clock.tick(FPS)
-    
+
+    pg.quit()
 
 if __name__ == "__main__":
     main()
