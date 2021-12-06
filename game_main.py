@@ -83,10 +83,29 @@ def entity_ai():
     global player
     global levels
     global current_level_index
+    #if timer % 30 != 0:
+    #    return
     for i in levels[current_level_index].obj_list:
-        if i.living and i.health <= 0:
-            levels[current_level_index].obj_list.remove(i)
-
+        if i.living:
+            if i.health <= 0:
+                levels[current_level_index].obj_list.remove(i)
+                continue
+            if levels[current_level_index].line_of_sight((i.x, i.y),
+                                                         (player.x, player.y)):
+                angle = math.atan2((player.y - i.y), (player.x - i.x))
+                i.move(angle)
+                i.look_at(angle)
+                if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1
+                     or i.type == "skelet")
+                    and timer % 30 == 0):
+                    new_list, player = i.attack((player.x, player.y),
+                                                levels[current_level_index].obj_list,
+                                                player)
+                    levels[current_level_index].obj_list = new_list
+        if i.type == "arrow":
+            new_list, player = i.move(levels[current_level_index], player)
+            levels[current_level_index].obj_list = new_list
+            #i.move(levels[current_level_index])
 def main():
     global levels
     global player

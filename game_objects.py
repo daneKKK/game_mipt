@@ -20,12 +20,16 @@ class Level:
         x1, y1 = pos1
         x2, y2 = pos2
         distance = math.sqrt( (x1 - x2) ** 2 + (y1 - y2) ** 2)
-        for i in range(0, distance, 1):
+        i = 2
+        while i <= distance:
             current_point = (x1 - i * (x1 - x2) / distance,
                              y1 - i * (y1 - y2) / distance)
-            for obj in object_list:
+            for obj in self.obj_list:
                 if obj.point_in_obj(current_point):
                     return False
+            i += 1
+        x_border = self.x_border
+        y_border = self.y_border
         return not (abs(x1 - x_border // 2) > x_border or abs(y1 - x_border // 2) > y_border
                     or abs(x2 - x_border // 2) > x_border or abs(y2 - x_border // 2) > y_border)
         return True
@@ -46,7 +50,7 @@ class Entity:
     y = 0
     r = 0.5
     health = 10
-    speed = 0.1
+    speed = 1 / 30
     facing_angle = 0
     attack_value = 1
     attack_speed = 30
@@ -68,9 +72,9 @@ class Entity:
             if self == i:
                 continue
             if i.point_in_obj(attacked_pos):
-                i.get_damage(attack_value)
+                i.get_damage(self.attack_value)
         if player.point_in_obj(attacked_pos) and not (self is player):
-            player.get_damage(attack_value)
+            player.get_damage(self.attack_value)
         return obj_list, player
             
 
@@ -103,7 +107,7 @@ class Entity:
         Изменение угла, на который смотрит объект
         angle - угол в радианах
         '''
-        facing_angle = angle
+        self.facing_angle = angle
 
     def draw(self, screen):
         pass
@@ -123,7 +127,7 @@ class Skelet(Entity):
     '''
     type = "skelet"
     health = 15
-    speed = 1
+    speed = 1 / 30
     attack_value = 2
     attack_speed = 60
     
@@ -133,12 +137,15 @@ class Skelet(Entity):
         attacked_pos - точка, в которую наносится урон.
         obj_list, player - список объектов и игрок. Нужны для единообразия.
         '''
-        self.look_at(math.atan2(attacked_pos[1]-self.x, attacked_pos[2]-self.y))
+        
+        self.look_at(math.atan2(attacked_pos[1]-self.y, attacked_pos[0]-self.x))
+        print(self.facing_angle)
         new_arrow = Arrow()
-        new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.angle)
-        new_arrow.y = self.y + (self.r + 0.02) * math.cos(self.angle)
-        new_arrow.angle = self.angle
-        new_arrow.damage = self.damage
+        new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
+        new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
+        new_arrow.angle = self.facing_angle
+        new_arrow.damage = self.attack_value
+        print(new_arrow.angle)
         obj_list += [new_arrow]
         return obj_list, player
 
@@ -185,6 +192,7 @@ class Player(Entity):
     через переменную weapon.
     '''
     weapon = Sword()
+    speed = 0.1
     def attack(self, attack_position, obj_list):
         '''
         Атака через оружие игрока
@@ -205,24 +213,33 @@ class Arrow:
     y = 0
     angle = 0
     damage = 1
-    speed = 3
+    speed = 5 / 30
     living = False
 
-    def move(self, level):
+    def move(self, level, player):
         '''
         Передвижение с проверкой на попадание.
         level - весь уровень.
         '''
-        old_x = self.x
-        old_y = self.y
-        new_x = self.x + speed * math.cos(self.angle)
-        new_y = self.y + speed * math.sin(self.angle)
-        if not level.line_of_sight((new_x, new_y), (self.x, self.y)):
+        self.x += self.speed * math.cos(self.angle)
+        self.y += self.speed * math.sin(self.angle)
+        
+
+        for i in level.obj_list:
+            if i.point_in_obj((self.x, self.y)):
+                level.obj_list.remove(self)
+                if i.living:
+                    i.get_damage(self.damage)
+                    print('attack')
+        
+                return level.obj_list, player
+        if player.point_in_obj((self.x, self.y)):
+            player.get_damage(self.damage)
             level.obj_list.remove(self)
-            return
-        self.x = new_x
-        self.y = new_y
-        return level
+            print('player attack')
+            return level.obj_list, player
+
+        return level.obj_list, player
 
     def attack(self, obj_list, player):
         '''
@@ -232,13 +249,14 @@ class Arrow:
         '''
         old_x = self.x
         old_y = self.y
-        new_x = self.x + speed * math.cos(self.angle)
-        new_y = self.y + speed * math.sin(self.angle)
-        for i in range(4):
+        new_x = self.x + self.speed * math.cos(self.angle)
+        new_y = self.y + self.speed * math.sin(self.angle)
+        for i in range(1):
             current_x = old_x + i / 4 * new_x
             current_y = old_x + i / 4 * new_y
             for j in obj_list:
                 if (j.living) and (j.point_in_obj((current_x, current_y))):
+                    print('attack')
                     j.get_damage(self.damage)
                     obj_list.remove(self)
             if player.point_in_obj((current_x, current_y)):
@@ -246,8 +264,8 @@ class Arrow:
                 obj_list.remove(self)
         return obj_list, player
 
-    def draw(self, screen):
-        pass
+    def point_in_obj(self, pos):
+        return False
             
 class ImmovableObject():
     '''
@@ -262,8 +280,8 @@ class ImmovableObject():
 
     def point_in_obj(self, point):
         x, y = point
-        return ((0 <= x - self.x) and (x - self.x <= size) and
-                (0 <= y - self.y) and (y - self.y <= size))
+        return ((0 <= x - self.x) and (x - self.x <= self.size) and
+                (0 <= y - self.y) and (y - self.y <= self.size))
 
 
     def __init__(self, x, y):

@@ -47,5 +47,9 @@ class Drawer:
         pg.draw.rect(self.screen, (0, 0, 0),
                      (scale_x(obj.x), scale_y(obj.y),
                       scale_size(obj.size), scale_size(obj.size)))
+
+    def draw_arrow(self, obj):
+        pg.draw.circle(self.screen, (100, 100, 100),
+                       (scale_x(obj.x), scale_y(obj.y)), 4)
         
         
