@@ -56,6 +56,7 @@ class Entity:
     attack_speed = 30
     living = True
     texture = None
+    texturepath = os.path.join('resources', 'face.png')
 
     def __init__(self, x, y):
         self.x = x
