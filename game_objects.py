@@ -1,4 +1,4 @@
-import math, json
+import math, json, os
 
 #Этот файл хранит информацию о всех классах
 
