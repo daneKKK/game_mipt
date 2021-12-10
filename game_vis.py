@@ -64,7 +64,10 @@ class Drawer:
                       scale_size(obj.size), scale_size(obj.size)))
 
     def draw_arrow(self, obj):
-        pg.draw.circle(self.screen, (100, 100, 100),
-                       (scale_x(obj.x), scale_y(obj.y)), 4)
+        texture_surface = pg.image.load(obj.texturepath)
+        texture_surface = pg.transform.scale(texture_surface, (
+        int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
+        texture_surface = self.rot_center(texture_surface, obj.facing_angle)
+        self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
         
         
