@@ -53,7 +53,7 @@ class Drawer:
         return rot_image
 
     def draw_entity(self, obj):
-        texture_surface = pg.image.load(obj.texturepath)
+        texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
@@ -64,10 +64,9 @@ class Drawer:
                       scale_size(obj.size), scale_size(obj.size)))
 
     def draw_arrow(self, obj):
-        texture_surface = pg.image.load(obj.texturepath)
-        texture_surface = pg.transform.scale(texture_surface, (
-        int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
-        texture_surface = self.rot_center(texture_surface, obj.facing_angle)
+        texture_surface = pg.image.load(obj.texturepath).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
+        texture_surface = self.rot_center(texture_surface, obj.angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
         
         
