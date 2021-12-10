@@ -209,7 +209,7 @@ class Arrow:
     type = "arrow"
     x = 0
     y = 0
-    r = 0.01
+    r = 0.1
     angle = 0
     damage = 1
     speed = 5 / 30
