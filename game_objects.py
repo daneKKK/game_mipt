@@ -180,7 +180,6 @@ class Sword(Weapon):
             if self == i or not i.living:
                 continue
             if i.point_in_obj(attack_position):
-                print(i)
                 i.get_damage(self.attack_value)
         return obj_list
 
@@ -210,10 +209,12 @@ class Arrow:
     type = "arrow"
     x = 0
     y = 0
+    r = 0.01
     angle = 0
     damage = 1
     speed = 5 / 30
     living = False
+    texturepath = os.path.join('resources', 'squid1.png')
 
     def move(self, level, player):
         '''
@@ -288,3 +289,4 @@ class ImmovableObject():
 class Wall(ImmovableObject):
     living = False
     type = "wall"
+    texturepath = os.path.join('resources', 'face_clicked.png')
