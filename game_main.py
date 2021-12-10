@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 import os, random
+import pygame_menu
 from pygame.locals import *
 
 from game_objects import *
@@ -108,21 +109,45 @@ def entity_ai():
             levels[current_level_index].obj_list = new_list
             if i.x >= 20 or i.x <= 0 or i.y >= 20 or i.y <= 0:
                 levels[current_level_index].obj_list.remove(i)
+def mainMenu():
+    menu = pygame_menu.Menu('Главное меню', 800, 800,
+                            theme=pygame_menu.themes.THEME_BLUE)
+    menu.add.button('Играть', mainloop)
+    #menu.add.button('Сохранить', saveGame)
+    #menu.add.button('Загрузить', loadGame)
+    menu.add.button('Выход', pg.quit)
+    return menu
+
 def main():
     global levels
     global player
     global current_level_index
     global timer
+    global screen
+    global drawer
+    global main_menu
 
     pg.init()
-
-    setPlayer()
 
     flags = DOUBLEBUF
     width = 800
     height = 800
     screen = pg.display.set_mode((width, height), flags)
     drawer = Drawer(screen)
+
+    setPlayer()
+
+    main_menu = mainMenu()
+    main_menu.mainloop(screen)
+
+def mainloop():
+    global levels
+    global player
+    global current_level_index
+    global timer
+    global screen
+    global drawer
+    global main_menu
 
     alive = True
 
@@ -137,10 +162,11 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 alive = False
+                pg.quit()
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     alive = False
-                    pg.quit()
+                    main_menu.mainloop(screen)
                 elif event.key == pg.K_f:
                     print(levels[current_level_index])
             elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
