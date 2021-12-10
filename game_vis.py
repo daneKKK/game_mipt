@@ -1,4 +1,5 @@
 import pygame as pg
+import math
 
 def drawLevel(isOpened):
     if isOpened:
@@ -39,10 +40,11 @@ class Drawer:
         elif obj.type == "arrow":
             self.draw_arrow(obj)
 
-    def rot_center(image, angle):
+    def rot_center(self, image, angle):
 
         """rotate an image while keeping its center and size"""
 
+        angle = 270 - angle * 180 / math.pi
         orig_rect = image.get_rect()
         rot_image = pg.transform.rotate(image, angle)
         rot_rect = orig_rect.copy()
@@ -52,7 +54,7 @@ class Drawer:
 
     def draw_entity(self, obj):
         texture_surface = pg.image.load(obj.texturepath)
-        texture_surface = pg.transform.scale(texture_surface, (scale_size(obj.r), (scale_size(obj.r))))
+        texture_surface = pg.transform.scale(texture_surface, (int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
 
