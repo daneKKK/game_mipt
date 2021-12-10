@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 import os, random
+from pygame.locals import *
 
 from game_objects import *
 from game_input import *
@@ -117,9 +118,10 @@ def main():
 
     setPlayer()
 
+    flags = DOUBLEBUF
     width = 800
     height = 800
-    screen = pg.display.set_mode((width, height))
+    screen = pg.display.set_mode((width, height), flags)
     drawer = Drawer(screen)
 
     alive = True
