@@ -59,9 +59,9 @@ class Drawer:
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
 
     def draw_wall(self, obj):
-        pg.draw.rect(self.screen, (0, 0, 0),
-                     (scale_x(obj.x), scale_y(obj.y),
-                      scale_size(obj.size), scale_size(obj.size)))
+        texture_surface = pg.image.load(obj.texturepath).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (int(scale_size(obj.size)), int(scale_size(obj.size))))
+        self.screen.blit(texture_surface, (scale_x(obj.x), scale_y(obj.y)))
 
     def draw_arrow(self, obj):
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
