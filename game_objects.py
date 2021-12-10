@@ -180,7 +180,6 @@ class Sword(Weapon):
             if self == i or not i.living:
                 continue
             if i.point_in_obj(attack_position):
-                print(i)
                 i.get_damage(self.attack_value)
         return obj_list
 
