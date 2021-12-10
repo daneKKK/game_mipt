@@ -139,13 +139,11 @@ class Skelet(Entity):
         '''
         
         self.look_at(math.atan2(attacked_pos[1]-self.y, attacked_pos[0]-self.x))
-        print(self.facing_angle)
         new_arrow = Arrow()
         new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
         new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
         new_arrow.angle = self.facing_angle
         new_arrow.damage = self.attack_value
-        print(new_arrow.angle)
         obj_list += [new_arrow]
         return obj_list, player
 
@@ -230,13 +228,11 @@ class Arrow:
                 level.obj_list.remove(self)
                 if i.living:
                     i.get_damage(self.damage)
-                    print('attack')
         
                 return level.obj_list, player
         if player.point_in_obj((self.x, self.y)):
             player.get_damage(self.damage)
             level.obj_list.remove(self)
-            print('player attack')
             return level.obj_list, player
 
         return level.obj_list, player

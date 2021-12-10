@@ -105,7 +105,8 @@ def entity_ai():
         if i.type == "arrow":
             new_list, player = i.move(levels[current_level_index], player)
             levels[current_level_index].obj_list = new_list
-            #i.move(levels[current_level_index])
+            if i.x >= 20 or i.x <= 0 or i.y >= 20 or i.y <= 0:
+                levels[current_level_index].obj_list.remove(i)
 def main():
     global levels
     global player
@@ -141,8 +142,6 @@ def main():
                 elif event.key == pg.K_f:
                     print(levels[current_level_index])
             elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
-                print(event.pos)
-                print(((event.pos[0] - 20) / 760 * 20, (event.pos[1] - 20)/760 * 20))
                 new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
                                          (event.pos[1] - 20)/760 * 20),
                                         levels[current_level_index].obj_list)
