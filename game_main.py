@@ -34,6 +34,14 @@ def load_save(filename):
     except FileNotFoundError:
         print('Файл не найден!')
 
+def saveGame():
+    global levels
+    global player
+    global current_player_index
+    filename = input('Введите название сохранения')
+    save_data(levels, player, current_level_index, filename)
+    
+
 def checkPlayerOnLevel():
     '''Проверка местонахождения игрока на уровне
     '''
@@ -115,7 +123,7 @@ def mainMenu():
     menu = pygame_menu.Menu('Главное меню', 800, 800,
                             theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Играть', mainloop)
-    #menu.add.button('Сохранить', saveGame)
+    menu.add.button('Сохранить', saveGame)
     #menu.add.button('Загрузить', loadGame)
     menu.add.button('Выход', pg.quit)
     return menu
@@ -170,11 +178,15 @@ def mainloop():
                     alive = False
                     main_menu.mainloop(screen)
                 elif event.key == pg.K_f:
-                    print(levels[current_level_index])
+                    if player.weapon.type == "sword":
+                        player.weapon = Bow()
+                    else:
+                        player.weapon = Sword()
             elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
                 attack_position = ((event.pos[0] - 20) / 760 * 20,
                                    (event.pos[1] - 20)/760 * 20)
-                if (attack_position[0] - player.x) ** 2 + (attack_position[1] - player.y) ** 2 <= 4:
+                if ((attack_position[0] - player.x) ** 2 + (attack_position[1] - player.y) ** 2 <= 4 or
+                    player.weapon.type == "bow"):
                     new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
                                              (event.pos[1] - 20)/760 * 20),
                                             levels[current_level_index].obj_list)
