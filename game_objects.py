@@ -118,7 +118,8 @@ class Spider(Entity):
     Класс Паук. Наследует от Entity
     '''
     type = "spider"
-    texture = None
+    texturepath = os.path.join('resources', 'Pictures', 'Spider', 's1.png')
+    speed = 3 / 30
 
 
 
@@ -127,6 +128,7 @@ class Skelet(Entity):
     Скелет-лучник. Наследует от Entity. Атакует издалека.
     '''
     type = "skelet"
+    texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
     health = 15
     speed = 1 / 30
     attack_value = 2
@@ -153,7 +155,7 @@ class Weapon:
     Класс оружия.
     '''
     attack_value = 1
-    reach = 1.5
+    reach = 2
     def attack(self, attack_position, obj_list):
         '''
         Атака оружия.
@@ -172,6 +174,8 @@ class Sword(Weapon):
     '''
     Меч. Наследует от Weapon.
     '''
+    type = "sword"
+    attack_value = 3
     def attack(self, attack_position, obj_list):
         '''
         Атака мечом. Аналогично Weapon.attack()
@@ -183,18 +187,45 @@ class Sword(Weapon):
                 i.get_damage(self.attack_value)
         return obj_list
 
+class Bow(Weapon):
+    '''
+    Лук. Наследует от Weapon.
+    '''
+    type = "bow"
+    attack_value = 1
+    def attack(self, attacked_pos, obj_list):
+        '''
+        Особенный вид атаки - издалека.
+        attacked_pos - точка, в которую наносится урон.
+        obj_list, player - список объектов.
+        '''
+        
+        new_arrow = Arrow()
+        new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
+        new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
+        new_arrow.angle = self.facing_angle
+        new_arrow.damage = self.attack_value
+        obj_list += [new_arrow]
+        return obj_list
+    
+
 
 class Player(Entity):
     '''
     Класс игрока. Наследует от Entity. Подразумевается, что может менять оружие
     через переменную weapon.
     '''
-    weapon = Sword()
+    weapon = Bow()
     speed = 0.1
+    texturepath = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
     def attack(self, attack_position, obj_list):
         '''
         Атака через оружие игрока
         '''
+        self.weapon.facing_angle = self.facing_angle
+        self.weapon.x = self.x
+        self.weapon.y = self.y
+        self.weapon.r = self.r
         return self.weapon.attack(attack_position, obj_list)
 
     def toJSON(self):
