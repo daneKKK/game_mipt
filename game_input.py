@@ -7,7 +7,7 @@ from game_objects import *
 
 def read(filename):
     '''
-    Читает json файл и возвращает информацию из него
+    Читает json файл и возвращает информацию из  него
     '''
     with open(filename, 'r') as file:
         return json.load(file)
