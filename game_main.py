@@ -117,7 +117,8 @@ def entity_ai():
                 if not (i.type == "skelet" and
                         ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 9)):
                  i.move(angle)
-                 i.changeTexture("move")
+                 if timer % 10 == 0:
+                     i.changeTexture("move")
                 i.look_at(angle)
                 if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1
                      or i.type == "skelet")
@@ -231,7 +232,7 @@ def mainloop():
             player.move(math.pi)
             hasMoved = True
 
-        if hasMoved and not hasAttacked:
+        if hasMoved and not hasAttacked and timer % 10 == 0:
             player.changeTexture("move")
 
         for i in levels[current_level_index].obj_list:

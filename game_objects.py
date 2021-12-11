@@ -148,7 +148,7 @@ class Skelet(Entity):
     '''
     type = "skelet"
     texturepath1 = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
-    texturepath2 = os.path.join('resources', 'Pictures', 'Enemy', 'e4.png')
+    texturepath2 = os.path.join('resources', 'Pictures', 'Enemy', 'e6.png')
     texturepath_atk = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
     texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
     health = 15
@@ -284,7 +284,7 @@ class Arrow:
     type = "arrow"
     x = 0
     y = 0
-    r = 0.1
+    r = 0.2
     angle = 0
     damage = 1
     speed = 5 / 30
