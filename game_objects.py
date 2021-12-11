@@ -59,11 +59,24 @@ class Entity:
     attack_speed = 30
     living = True
     texture = None
+    texturepath1 = os.path.join('resources', 'face.png')
+    texturepath2 = os.path.join('resources', 'face.png')
+    texturepath_atk = os.path.join('resources', 'face.png')
     texturepath = os.path.join('resources', 'face.png')
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def changeTexture(action):
+        if action == "attack":
+            self.texturepath = self.texturepath_atk
+        elif action == "move":
+            if self.texturepath == self.texturepath1:
+                self.texturepath = self.texturepath2
+            else:
+                self.texturepath = self.texturepath1
+            
 
     def attack(self, attacked_pos, obj_list, player):
         '''
@@ -121,6 +134,9 @@ class Spider(Entity):
     Класс Паук. Наследует от Entity
     '''
     type = "spider"
+    texturepath1 = os.path.join('resources', 'Pictures', 'Spider', 's1.png')
+    texturepath2 = os.path.join('resources', 'Pictures', 'Spider', 's2.png')
+    texturepath_atk = os.path.join('resources', 'Pictures', 'Spider', 's5.png')
     texturepath = os.path.join('resources', 'Pictures', 'Spider', 's1.png')
     speed = 3 / 30
 
@@ -131,7 +147,10 @@ class Skelet(Entity):
     Скелет-лучник. Наследует от Entity. Атакует издалека.
     '''
     type = "skelet"
-    texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
+    texturepath1 = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
+    texturepath2 = os.path.join('resources', 'Pictures', 'Enemy', 'e4.png')
+    texturepath_atk = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
+    texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
     health = 15
     speed = 1 / 30
     attack_value = 2
@@ -220,7 +239,24 @@ class Player(Entity):
     '''
     weapon = Bow()
     speed = 0.1
+    texturepath1 = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
+    texturepath2 = os.path.join('resources', 'Pictures','Main ch', 'm1_2.png')
+    texturepath_atk1 = os.path.join('resources', 'Pictures','Main ch', 'm4.png')
+    texturepath_atk2 = os.path.join('resources', 'Pictures','Main ch', 'm2.png')
     texturepath = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
+
+    def changeTexture(self, action):
+        if action == "attack":
+            if self.weapon.type == "sword":
+                self.texturepath = self.texturepath_atk1
+            else:
+                self.texturepath = self.texturepath_atk2
+        elif action == "move":
+            if self.texturepath == self.texturepath1:
+                self.texturepath = self.texturepath2
+            else:
+                self.texturepath = self.texturepath1
+    
     def attack(self, attack_position, obj_list):
         '''
         Атака через оружие игрока
@@ -328,4 +364,4 @@ class ImmovableObject():
 class Wall(ImmovableObject):
     living = False
     type = "wall"
-    texturepath = os.path.join('resources', 'face_clicked.png')
+    texturepath = os.path.join('resources', 'face.png')
