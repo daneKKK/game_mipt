@@ -42,7 +42,6 @@ def read_level_objects_data(data):
     level_object.obj_list = []
     for obj in level:
         if obj == 'spiders':
-            print('e')
             for i in range(len(level[obj])):
                 spider =read_spider_data(level[obj], i)
                 level_object.obj_list.append(spider)
