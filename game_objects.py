@@ -289,7 +289,7 @@ class Arrow:
     r = 0.2
     angle = 0
     damage = 1
-    speed = 5 / 30
+    speed = 9 / 30
     living = False
     texturepath = os.path.join('resources', 'squid1.png')
 
