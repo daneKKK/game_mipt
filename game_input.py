@@ -24,10 +24,10 @@ def write(data, filename):
 
 
 def read_new_level(filename):
-   '''
-   Берёт filename, достаёт из него информацию, прогоняет
-   её через read_level_objects_data и возвращает результат
-   '''
+    '''
+    Берёт filename, достаёт из него информацию, прогоняет
+    её через read_level_objects_data и возвращает результат
+    '''
     level = read(filename)
     return read_level_objects_data(level)
 
@@ -42,6 +42,7 @@ def read_level_objects_data(data):
     level_object.obj_list = []
     for obj in level:
         if obj == 'spiders':
+            print('e')
             for i in range(len(level[obj])):
                 spider =read_spider_data(level[obj], i)
                 level_object.obj_list.append(spider)
