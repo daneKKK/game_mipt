@@ -174,6 +174,10 @@ def mainloop():
                                          (event.pos[1] - 20)/760 * 20),
                                         levels[current_level_index].obj_list)
                 levels[current_level_index].obj_list = new_obj
+            elif event.type == pg.MOUSEMOTION:
+                angle = math.atan2(((event.pos[1] - 20) / 760 * 20 - player.y),
+                                   ((event.pos[0] - 20)/760 * 20 - player.x))
+                player.look_at(angle)
                     
         if pg.key.get_pressed()[pg.K_s]:
             player.move(math.pi/2)
