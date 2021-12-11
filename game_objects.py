@@ -68,7 +68,7 @@ class Entity:
         self.x = x
         self.y = y
 
-    def changeTexture(action):
+    def changeTexture(self, action):
         if action == "attack":
             self.texturepath = self.texturepath_atk
         elif action == "move":

@@ -106,8 +106,6 @@ def entity_ai():
     global player
     global levels
     global current_level_index
-    #if timer % 30 != 0:
-    #    return
     for i in levels[current_level_index].obj_list:
         if i.living:
             if i.health <= 0:
@@ -119,10 +117,12 @@ def entity_ai():
                 if not (i.type == "skelet" and
                         ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 9)):
                  i.move(angle)
+                 i.changeTexture("move")
                 i.look_at(angle)
                 if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1
                      or i.type == "skelet")
                     and timer % 30 == 0):
+                    i.changeTexture("attack")
                     new_list, player = i.attack((player.x, player.y),
                                                 levels[current_level_index].obj_list,
                                                 player)
@@ -173,13 +173,16 @@ def mainloop():
     global main_menu
 
     alive = True
+    hasMoved = False
+    hasAttacked = False
 
     while alive:
         anyEnemyLeft = False
+
+        hasMoved = False
+        if timer % 15 == 0:
+            hasAttacked = False
         
-        drawLevel(isOpened)
-
-
         checkPlayerOnLevel()
         
         for event in pg.event.get():
@@ -198,14 +201,18 @@ def mainloop():
             elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
                 attack_position = ((event.pos[0] - 20) / 760 * 20,
                                    (event.pos[1] - 20)/760 * 20)
-                if ((attack_position[0] - player.x) ** 2 + (attack_position[1] - player.y) ** 2 <= 4 or
-                    player.weapon.type == "bow"):
-                    new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
-                                             (event.pos[1] - 20)/760 * 20),
+                if not hasAttacked:
+                    attack_pos_rel = ((event.pos[0] - 20) / 760 * 20 - player.x,
+                                  (event.pos[1] - 20)/760 * 20 - player.y)
+                    attack_pos_rel = (min(player.weapon.reach * math.cos(player.facing_angle), attack_pos_rel[0]),
+                                      min(player.weapon.reach * math.sin(player.facing_angle), attack_pos_rel[1]))
+                    attack_pos = (attack_pos_rel[0] + player.x, attack_pos_rel[1] + player.y)
+                    
+                    new_obj = player.attack(attack_pos,
                                             levels[current_level_index].obj_list)
                     levels[current_level_index].obj_list = new_obj
-                else:
-                    print('Cant reach')
+                    hasAttacked = True
+                    player.changeTexture("attack")
             elif event.type == pg.MOUSEMOTION:
                 angle = math.atan2(((event.pos[1] - 20) / 760 * 20 - player.y),
                                    ((event.pos[0] - 20)/760 * 20 - player.x))
@@ -213,12 +220,19 @@ def mainloop():
                     
         if pg.key.get_pressed()[pg.K_s]:
             player.move(math.pi/2)
+            hasMoved = True
         if pg.key.get_pressed()[pg.K_w]:
             player.move(-math.pi/2)
+            hasMoved = True
         if pg.key.get_pressed()[pg.K_d]:
             player.move(0)
+            hasMoved = True
         if pg.key.get_pressed()[pg.K_a]:
             player.move(math.pi)
+            hasMoved = True
+
+        if hasMoved and not hasAttacked:
+            player.changeTexture("move")
 
         for i in levels[current_level_index].obj_list:
             if i.living:
