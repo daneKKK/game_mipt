@@ -74,7 +74,7 @@ def createNewLevel():
     '''
     global levels
     new_level_name = random.choice(os.listdir("levels\\"))
-    new_level = read_level_objects_data(os.path.join("levels", new_level_name))
+    new_level = read_new_level(os.path.join("levels", new_level_name))
     levels += [new_level]
 
 def setPlayer():
