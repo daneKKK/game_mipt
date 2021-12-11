@@ -36,8 +36,11 @@ class Level:
 
     
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
+        spiders = [[i.x, i.y] for i in self.obj_list if i.type == "spider"]
+        skelets = [[i.x, i.y] for i in self.obj_list if i.type == "skelet"]
+        walls = [[i.x, i.y] for i in self.obj_list if i.type == "wall"]
+        level_data = {"spiders": spiders, "skelets": skelets, "walls": walls}
+        return level_data
 
 #Подход к объектам: в целях упрощения просчёта столкновений объектов сделаем их
 #минимальный размер, равный 0.5
@@ -228,9 +231,14 @@ class Player(Entity):
         self.weapon.r = self.r
         return self.weapon.attack(attack_position, obj_list)
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
+    def toJSON(self, current_level_index):
+        player_data = {"health": self.health,
+                       "current_level": current_level_index,
+                       "x": self.x,
+                       "y": self.y,
+                       "current_weapon is sword": self.weapon.type == "sword"
+                       }
+        return player_data
 
     
 class Arrow:
