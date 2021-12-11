@@ -95,7 +95,9 @@ def entity_ai():
             if levels[current_level_index].line_of_sight((i.x, i.y),
                                                          (player.x, player.y)):
                 angle = math.atan2((player.y - i.y), (player.x - i.x))
-                i.move(angle)
+                if not (i.type == "skelet" and
+                        ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 9)):
+                 i.move(angle)
                 i.look_at(angle)
                 if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1
                      or i.type == "skelet")
@@ -170,10 +172,15 @@ def mainloop():
                 elif event.key == pg.K_f:
                     print(levels[current_level_index])
             elif event.type == pg.MOUSEBUTTONDOWN and not attackedAlready:
-                new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
-                                         (event.pos[1] - 20)/760 * 20),
-                                        levels[current_level_index].obj_list)
-                levels[current_level_index].obj_list = new_obj
+                attack_position = ((event.pos[0] - 20) / 760 * 20,
+                                   (event.pos[1] - 20)/760 * 20)
+                if (attack_position[0] - player.x) ** 2 + (attack_position[1] - player.y) ** 2 <= 4:
+                    new_obj = player.attack(((event.pos[0] - 20) / 760 * 20,
+                                             (event.pos[1] - 20)/760 * 20),
+                                            levels[current_level_index].obj_list)
+                    levels[current_level_index].obj_list = new_obj
+                else:
+                    print('Cant reach')
             elif event.type == pg.MOUSEMOTION:
                 angle = math.atan2(((event.pos[1] - 20) / 760 * 20 - player.y),
                                    ((event.pos[0] - 20)/760 * 20 - player.x))
