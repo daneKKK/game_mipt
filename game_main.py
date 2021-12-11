@@ -120,7 +120,7 @@ def entity_ai():
                  if timer % 10 == 0:
                      i.changeTexture("move")
                 i.look_at(angle)
-                if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1
+                if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 2.25
                      or i.type == "skelet")
                     and timer % 30 == 0):
                     i.changeTexture("attack")
