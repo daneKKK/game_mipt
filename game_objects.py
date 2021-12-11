@@ -1,4 +1,5 @@
 import math, json, os
+from random import uniform
 
 #Этот файл хранит информацию о всех классах
 
@@ -169,7 +170,7 @@ class Skelet(Entity):
         new_arrow = Arrow()
         new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
         new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
-        new_arrow.angle = self.facing_angle
+        new_arrow.angle = self.facing_angle + uniform(-0.2, 0.2)
         new_arrow.damage = self.attack_value
         obj_list += [new_arrow]
         return obj_list, player
