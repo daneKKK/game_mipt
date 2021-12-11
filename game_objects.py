@@ -52,6 +52,7 @@ class Entity:
     x = 0
     y = 0
     r = 0.5
+    max_health = 10
     health = 10
     speed = 1 / 30
     facing_angle = 0
@@ -151,6 +152,7 @@ class Skelet(Entity):
     texturepath2 = os.path.join('resources', 'Pictures', 'Enemy', 'e6.png')
     texturepath_atk = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
     texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
+    max_health = 15
     health = 15
     speed = 1 / 30
     attack_value = 2
