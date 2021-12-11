@@ -105,15 +105,11 @@ def load_data(filename):
     '''
     data = read(filename)
     levels = [read_level_objects_data(data[i]) for i in range(len(data)) if i < len(data) - 1]
-    character = Player()
+    character = Player(0, 0)
     character.health = float(data[len(data)-1]['health'])
     character.x = float(data[len(data)-1]['x'])
     character.y = float(data[len(data)-1]['y'])
     current_level_index = int(data[len(data)-1]['current_level'])
     return levels, character, current_level_index
-
-#в мейне:
-#information = load_data(save.json)
-# =
 
     

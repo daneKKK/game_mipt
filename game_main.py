@@ -39,8 +39,21 @@ def saveGame():
     global player
     global current_player_index
     filename = input('Введите название сохранения')
-    save_data(levels, player, current_level_index, filename)
+    path_name = os.path.join('saves', filename)
+    save_data(levels, player, current_level_index, path_name)
     
+def loadGame():
+    global levels
+    global player
+    global current_player_index
+    filename = input('Введите название файла сохранения')
+    path_name = os.path.join('saves', filename)
+    try:
+        levels, player, current_level_index = load_data(path_name)
+    except FileNotFoundError:
+        print('Файл не найден!')
+
+
 
 def checkPlayerOnLevel():
     '''Проверка местонахождения игрока на уровне
@@ -124,7 +137,7 @@ def mainMenu():
                             theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Играть', mainloop)
     menu.add.button('Сохранить', saveGame)
-    #menu.add.button('Загрузить', loadGame)
+    menu.add.button('Загрузить', loadGame)
     menu.add.button('Выход', pg.quit)
     return menu
 
