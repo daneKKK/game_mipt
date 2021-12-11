@@ -21,7 +21,7 @@ class Drawer:
         self.screen = screen
 
 
-    def update(self, level, player):
+    def update(self, level, player, current_level_index):
         self.screen.fill((255, 255, 255))
         for obj in level.obj_list:
             self.draw(obj)

@@ -242,7 +242,8 @@ def mainloop():
         entity_ai()
         
         if alive:
-            drawer.update(levels[current_level_index], player)
+            drawer.update(levels[current_level_index], player,
+                          current_level_index)
 
 
 
