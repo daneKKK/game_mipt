@@ -38,7 +38,7 @@ class Level:
     def toJSON(self):
         spiders = [[i.x, i.y] for i in self.obj_list if i.type == "spider"]
         skelets = [[i.x, i.y] for i in self.obj_list if i.type == "skelet"]
-        walls = [[i.x, i.y] for i in self.obj_list if i.type == "wall"]
+        walls = [[i.x+0.5, i.y+0.5] for i in self.obj_list if i.type == "wall"]
         level_data = {"spiders": spiders, "skelets": skelets, "walls": walls}
         return level_data
 
