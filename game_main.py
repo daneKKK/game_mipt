@@ -264,6 +264,7 @@ def main():
     #Создание первого уровня
     setPlayer()
     starting_level = Level()
+    starting_level.obj_list = [Wall(100, 100)]
     levels += [starting_level]
 
     #Создание менюшек и запуск главного меню
