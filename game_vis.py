@@ -22,7 +22,10 @@ class Drawer:
 
 
     def update(self, level, player, current_level_index):
-        self.screen.fill((255, 255, 255))
+        if any ([i.living for i in level.obj_list]):
+            self.drawClosedLevel()
+        else:
+            self.drawOpenedLevel()
         for obj in level.obj_list:
             self.draw(obj)
         for obj in level.obj_list:
@@ -94,3 +97,13 @@ class Drawer:
                           scale_y(obj.y - obj.r) - 4,
                           hp_rect_width, 4)
         pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
+
+    def drawOpenedLevel(self):
+        texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bcl.png')
+        texture_surface = pg.image.load(texturepath).convert()
+        self.screen.blit(texture_surface, (0, 0))
+
+    def drawClosedLevel(self):
+        texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bop.png')
+        texture_surface = pg.image.load(texturepath).convert()
+        self.screen.blit(texture_surface, (0, 0))
