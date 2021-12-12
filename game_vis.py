@@ -1,12 +1,6 @@
 import pygame as pg
 import math, os
 
-def drawLevel(isOpened):
-    if isOpened:
-        pass
-    else:
-        pass
-
 def scale_x(x):
     return 20 + x * 38
 
