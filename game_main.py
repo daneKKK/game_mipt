@@ -53,6 +53,14 @@ def loadGame():
     except FileNotFoundError:
         print('Файл не найден!')
 
+def endGame():
+    global screen
+    game_over_menu = pygame_menu.Menu('Конец игры', 800, 800,
+                                      theme=pygame_menu.themes.THEME_BLUE)
+    game_over_menu.add.button('Выйти в главное меню', main)
+    game_over_menu.add.button('Выход', pg.quit)
+    game_over_menu.mainloop(screen)
+
 
 
 def checkPlayerOnLevel():
@@ -114,8 +122,9 @@ def entity_ai():
             if levels[current_level_index].line_of_sight((i.x, i.y),
                                                          (player.x, player.y)):
                 angle = math.atan2((player.y - i.y), (player.x - i.x))
-                if not (i.type == "skelet" and
-                        ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 9)):
+                if (not (i.type == "skelet" and
+                         ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 9))
+                    and not ((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 1)):
                  i.move(angle)
                  if timer % 10 == 0:
                      i.changeTexture("move")
@@ -240,6 +249,9 @@ def mainloop():
                 anyEnemyLeft = True
 
         entity_ai()
+
+        if player.health <= 0:
+            endGame()
         
         if alive:
             drawer.update(levels[current_level_index], player,
