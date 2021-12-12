@@ -49,6 +49,10 @@ def drawFirstLevel(screen):
                               400 + height + height2 + height3 + 6))
 
 class Drawer:
+
+    optimized_walls = []
+    wall_optimizing = False
+    
     def __init__(self, screen):
         self.screen = screen
 
@@ -58,6 +62,19 @@ class Drawer:
             self.drawClosedLevel()
         else:
             self.drawOpenedLevel()
+
+        self.current_index = current_level_index
+
+        if len(self.optimized_walls) <= current_level_index:
+            print('debug')
+            wall_counter = 0
+            for i in level.obj_list:
+                if i.type == "wall":
+                    wall_counter += 1
+            self.optimized_walls += [wall_counter >= 50]
+
+        self.wall_optimizing = self.optimized_walls[current_level_index]
+            
 
         if current_level_index == 0:
             drawFirstLevel(self.screen)
@@ -103,7 +120,8 @@ class Drawer:
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(3 * scale_size(obj.r)), int(3 * scale_size(obj.r))))
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
-        self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
+        self.screen.blit(texture_surface, (scale_x(obj.x - obj.r * 1.5),
+                                           scale_y(obj.y - obj.r  * 1.5)))
 
     def drawHPbar(self, obj):
         hp_rect_width = obj.health / obj.max_health * 3 * scale_size(obj.r)
@@ -120,9 +138,19 @@ class Drawer:
         pg.draw.rect(self.screen, (0, 255, 0), (2, 2,
                                                 hp_rect_width_green, 11))
     def draw_wall(self, obj):
+        if self.wall_optimizing:
+            self.draw_optimized_wall(obj)
+            return
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(scale_size(obj.size)), int(scale_size(obj.size))))
         self.screen.blit(texture_surface, (scale_x(obj.x), scale_y(obj.y)))
+
+    def draw_optimized_wall(self, obj):
+        pg.draw.rect(self.screen, (150, 150, 150), (scale_x(obj.x),
+                                                    scale_y(obj.y),
+                                                    scale_size(obj.size),
+                                                    scale_size(obj.size)))
+        
 
     def draw_arrow(self, obj):
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
