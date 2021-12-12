@@ -173,7 +173,7 @@ def entity_ai():
                 #Атака при определённых условиях
                 if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 2.25
                      or i.type == "skelet")
-                    and timer % 30 == 0):
+                    and timer % 10 == 0 and random.choice([True, False])):
                     i.changeTexture("attack")
                     new_list, player = i.attack((player.x, player.y),
                                                 levels[current_level_index].obj_list,
@@ -304,7 +304,7 @@ def mainloop():
 
         #Обнуление информации о движении и атаке
         hasMoved = False
-        if timer % 15 == 0:
+        if timer % 10 == 0:
             hasAttacked = False
 
         #Обработка событий игрока
