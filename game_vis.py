@@ -27,7 +27,10 @@ class Drawer:
             self.draw(obj)
 
         self.draw(player)
-        
+        for obj in level.obj_list:
+            if obj.living:
+                self.drawHPbar(obj)
+        self.drawPlayerHP(player)
         pg.display.update()
 
 
@@ -58,6 +61,20 @@ class Drawer:
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
 
+    def drawHPbar(self, obj):
+        hp_rect_width = obj.health / obj.max_health * 3 * scale_size(obj.r)
+        hp_rect_coords = (scale_x(obj.x) - hp_rect_width / 2,
+                          scale_y(obj.y - obj.r) - 4,
+                          hp_rect_width, 4)
+        pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
+
+    def drawPlayerHP(self, obj):
+        hp_rect_width_red = 3 * scale_size(2)
+        hp_rect_width_green = obj.health / obj.max_health * 3 * scale_size(2)
+        pg.draw.rect(self.screen, (255, 0, 0), (2, 2,
+                                                hp_rect_width_red, 11))
+        pg.draw.rect(self.screen, (0, 255, 0), (2, 2,
+                                                hp_rect_width_green, 11))
     def draw_wall(self, obj):
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(scale_size(obj.size)), int(scale_size(obj.size))))
