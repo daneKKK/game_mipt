@@ -58,7 +58,7 @@ def endGame():
     global current_level_index
     game_over_menu = pygame_menu.Menu('Конец игры', 800, 800,
                                       theme=pygame_menu.themes.THEME_BLUE)
-    game_over_menu.add.label(('Уровень ' + str(current_level_index + 1)),
+    game_over_menu.add.label(('Уровень ' + str(current_level_index)),
                              max_char=-1, font_size=40)
     game_over_menu.add.label('Вы умерли', max_char=-1, font_size=20)
     game_over_menu.add.button('Выйти в главное меню', main)
