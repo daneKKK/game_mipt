@@ -1,5 +1,4 @@
-import math, json, os
-from random import uniform
+import math, json, os, random
 
 #Этот файл хранит информацию о всех классах
 
@@ -37,9 +36,6 @@ class Level:
 
     
     def toJSON(self):
-        '''
-        Перевод информации об уровне в строку для сохранения в формат JSON
-        '''
         spiders = [[i.x, i.y] for i in self.obj_list if i.type == "spider"]
         skelets = [[i.x, i.y] for i in self.obj_list if i.type == "skelet"]
         walls = [[i.x, i.y] for i in self.obj_list if i.type == "wall"]
@@ -53,52 +49,27 @@ class Entity:
     '''
     Класс всех живых объектов.
     '''
-    #Координаты
     x = 0
     y = 0
-
-    #Размер
     r = 0.5
-
-    #Здоровье
     max_health = 10
     health = 10
-
-    #Скорость
     speed = 1 / 30
-
-    #Угол поворота
     facing_angle = 0
-
-    #Информация об атаках
     attack_value = 1
     attack_speed = 30
-
-    #Является ли живым
     living = True
-
-    #Пусть к текстурам объекта
-    #Текстуры движения
+    texture = None
     texturepath1 = os.path.join('resources', 'face.png')
     texturepath2 = os.path.join('resources', 'face.png')
-    #Текстура атаки
     texturepath_atk = os.path.join('resources', 'face.png')
-    #Текущая текстура
     texturepath = os.path.join('resources', 'face.png')
 
     def __init__(self, x, y):
-        '''
-        Инициализация. Координаты x, y в пределах от 0 до 19.(9)
-        '''
         self.x = x
         self.y = y
 
     def changeTexture(self, action):
-        '''
-        Смена текущей текстуры в зависимости от движения:
-        action = "attack" - смена на текстуру атаки,
-        action = "move" - поочерёдная смена двух тектур движения
-        '''
         if action == "attack":
             self.texturepath = self.texturepath_atk
         elif action == "move":
@@ -156,6 +127,8 @@ class Entity:
         '''
         self.facing_angle = angle
 
+    def draw(self, screen):
+        pass
 
 class Spider(Entity):
     '''
@@ -196,7 +169,7 @@ class Skelet(Entity):
         new_arrow = Arrow()
         new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
         new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
-        new_arrow.angle = self.facing_angle + uniform(-0.2, 0.2)
+        new_arrow.angle = self.facing_angle
         new_arrow.damage = self.attack_value
         obj_list += [new_arrow]
         return obj_list, player
@@ -275,10 +248,6 @@ class Player(Entity):
     texturepath = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
 
     def changeTexture(self, action):
-        '''
-        Та же самая смена текстуры, но атакующая текстура зависит от текущего
-        оружия
-        '''
         if action == "attack":
             if self.weapon.type == "sword":
                 self.texturepath = self.texturepath_atk1
@@ -301,9 +270,6 @@ class Player(Entity):
         return self.weapon.attack(attack_position, obj_list)
 
     def toJSON(self, current_level_index):
-        '''
-        Перевод в строку для сохранения в JSON
-        '''
         player_data = {"health": self.health,
                        "current_level": current_level_index,
                        "x": self.x,
@@ -325,7 +291,8 @@ class Arrow:
     damage = 1
     speed = 9 / 30
     living = False
-    texturepath = os.path.join('resources', 'squid1.png')
+    arrow_name = random.choice(['Arr1.png', 'Arr2.png'])
+    texturepath = os.path.join('resources', 'Pictures', 'Arrows', arrow_name)
 
     def move(self, level, player):
         '''
@@ -374,16 +341,11 @@ class Arrow:
         return obj_list, player
 
     def point_in_obj(self, pos):
-        '''
-        Этот метод нужен для единообразия с остальными классами
-        '''
         return False
             
 class ImmovableObject():
     '''
     Недвижимый объект (например, стена).
-    Важно: центром объекта является точка self.x + (1/2)*self.size (аналогично
-    для y), а (self.x, self.y) - лишь угол объекта
     '''
     living = False
     x = 0
@@ -393,26 +355,17 @@ class ImmovableObject():
     living = False
 
     def point_in_obj(self, point):
-        '''
-        Проверка на нахождение точки внутри объекта.
-        point - кортеж двух чисел
-        '''
         x, y = point
         return ((0 <= x - self.x) and (x - self.x <= self.size) and
                 (0 <= y - self.y) and (y - self.y <= self.size))
 
 
     def __init__(self, x, y):
-        '''
-        Инициализация.
-        '''
         self.x = x
         self.y = y
 
 class Wall(ImmovableObject):
-    '''
-    Стена
-    '''
     living = False
     type = "wall"
-    texturepath = os.path.join('resources', 'face.png')
+    wall_name = random.choice(['wall1.png', 'wall2.png', 'wall3.png'])
+    texturepath = os.path.join('resources', 'Pictures', 'Other', wall_name)
