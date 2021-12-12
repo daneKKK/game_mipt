@@ -328,8 +328,9 @@ def mainloop():
                 if not hasAttacked:
                     attack_pos_rel = ((event.pos[0] - 20) / 760 * 20 - player.x,
                                   (event.pos[1] - 20)/760 * 20 - player.y)
-                    attack_pos_rel = (min(player.weapon.reach * math.cos(player.facing_angle), attack_pos_rel[0]),
-                                      min(player.weapon.reach * math.sin(player.facing_angle), attack_pos_rel[1]))
+                    if (attack_pos_rel[0])**2 + (attack_pos_rel[1])**2 > player.weapon.reach**2:
+                        attack_pos_rel = (player.weapon.reach * math.cos(player.facing_angle),
+                                          player.weapon.reach * math.sin(player.facing_angle))
                     attack_pos = (attack_pos_rel[0] + player.x, attack_pos_rel[1] + player.y)
                     
                     new_obj = player.attack(attack_pos,
