@@ -67,7 +67,7 @@ def endGame():
 
 
 
-def checkPlayerOnLevel():
+def checkPlayerOnLevel(anyEnemyLeft):
     '''Проверка местонахождения игрока в пределах уровня
     '''
     global player
@@ -261,13 +261,17 @@ def main():
     screen = pg.display.set_mode((width, height), flags)
     drawer = Drawer(screen)
 
+    #Создание первого уровня
     setPlayer()
+    starting_level = Level()
+    levels += [starting_level]
 
     #Создание менюшек и запуск главного меню
     save_menu = saveMenu()
     load_menu = loadMenu()
     main_menu = mainMenu()
     main_menu.mainloop(screen)
+
 
 def mainloop():
     '''
@@ -374,6 +378,11 @@ def mainloop():
         #Проверка персонажа на смерть
         if player.health <= 0:
             endGame()
+
+        #Рисование на первом уровне:
+        #TO-DO: сделать метод drawFirstLevel() в game_vis.py
+        #if current_level_index == 0:
+        #    drawFirstLevel()
 
         #Рисование на экране, если программа ещё работает
         if alive:
