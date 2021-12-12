@@ -72,6 +72,7 @@ class Drawer:
             if obj.living:
                 self.drawHPbar(obj)
         self.drawPlayerHP(player)
+        self.drawWeaponIcon(player)
         pg.display.update()
 
 
@@ -133,6 +134,22 @@ class Drawer:
                           scale_y(obj.y - obj.r) - 4,
                           hp_rect_width, 4)
         pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
+
+    def drawWeaponIcon(self, player):
+        sword_icon = os.path.join('resources', 'squid1.png')
+        bow_icon = os.path.join('resources', 'squid1.png')
+        if player.weapon.type == "sword":
+            pg.draw.rect(self.screen, (0, 0, 0), (600, 2, 40, 40))
+        else:
+            pg.draw.rect(self.screen, (0, 0, 0), (640, 2, 40, 40))
+
+        texture_surface = pg.image.load(sword_icon).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (32, 32))
+        self.screen.blit(texture_surface, (604, 4))
+
+        texture_surface = pg.image.load(bow_icon).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (32, 32))
+        self.screen.blit(texture_surface, (644, 4))
 
     def drawOpenedLevel(self):
         texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bcl.png')
