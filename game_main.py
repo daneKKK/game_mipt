@@ -24,29 +24,22 @@ attackedAlready = False
 alive = True
 
 
-def load_save(filename):
-    #Загрузка сейва
-    global levels
-    global player
-    global current_level_index
-    try:
-        levels, player, current_level_index = load_data(filename)
-    except FileNotFoundError:
-        print('Файл не найден!')
 
-def saveGame():
+
+def saveGame(filename):
     global levels
     global player
     global current_player_index
-    filename = input('Введите название сохранения')
+    filename += '.json'
     path_name = os.path.join('saves', filename)
-    save_data(levels, player, current_level_index, path_name)
-    
-def loadGame():
+    save_data(levels, player, current_level_index, path_name)    
+
+
+def loadGame(filename):
     global levels
     global player
     global current_player_index
-    filename = input('Введите название файла сохранения')
+    filename += '.json'
     path_name = os.path.join('saves', filename)
     try:
         levels, player, current_level_index = load_data(path_name)
@@ -55,8 +48,12 @@ def loadGame():
 
 def endGame():
     global screen
+    global current_level_index
     game_over_menu = pygame_menu.Menu('Конец игры', 800, 800,
                                       theme=pygame_menu.themes.THEME_BLUE)
+    game_over_menu.add.label(('Уровень ' + str(current_level_index + 1)),
+                             max_char=-1, font_size=40)
+    game_over_menu.add.label('Вы умерли', max_char=-1, font_size=20)
     game_over_menu.add.button('Выйти в главное меню', main)
     game_over_menu.add.button('Выход', pg.quit)
     game_over_menu.mainloop(screen)
@@ -166,10 +163,33 @@ def mainMenu():
     menu = pygame_menu.Menu('Главное меню', 800, 800,
                             theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Играть', mainloop)
-    menu.add.button('Сохранить', saveGame)
-    menu.add.button('Загрузить', loadGame)
+    menu.add.button('Сохранить', save_menu)
+    menu.add.button('Загрузить', load_menu)
     menu.add.button('Выход', pg.quit)
     return menu
+
+def saveMenu():
+    saveMenu = pygame_menu.Menu('Сохранение', 800, 800,
+                                theme=pygame_menu.themes.THEME_BLUE)
+    saveMenu.add.label('Введите название сохранения', max_char=-1,
+                   font_size=40)
+    saveMenu.add.text_input('', default='New save', maxchar=20, onreturn=saveGame)
+    saveMenu.add.label('Нажмите ENTER, чтобы подтвердить выбор', max_char=-1,
+                       font_size=40)
+    saveMenu.add.button('Назад', pygame_menu.events.BACK)
+    return saveMenu
+
+def loadMenu():
+    loadMenu = pygame_menu.Menu('Загрузка', 800, 800,
+                                theme=pygame_menu.themes.THEME_BLUE)
+    loadMenu.add.label('Введите название сохранения', max_char=-1,
+                   font_size=40)
+    loadMenu.add.text_input('', default='New save', maxchar=20, onreturn=loadGame)
+    loadMenu.add.label('Нажмите ENTER, чтобы подтвердить выбор', max_char=-1,
+                       font_size=40)
+    loadMenu.add.button('Назад', pygame_menu.events.BACK)
+    return loadMenu
+
 
 def main():
     global levels
@@ -179,6 +199,8 @@ def main():
     global screen
     global drawer
     global main_menu
+    global save_menu
+    global load_menu
 
     pg.init()
 
@@ -190,6 +212,8 @@ def main():
 
     setPlayer()
 
+    save_menu = saveMenu()
+    load_menu = loadMenu()
     main_menu = mainMenu()
     main_menu.mainloop(screen)
 
@@ -201,6 +225,8 @@ def mainloop():
     global screen
     global drawer
     global main_menu
+    global save_menu
+    global load_menu
 
     alive = True
     hasMoved = False
