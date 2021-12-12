@@ -58,7 +58,7 @@ def endGame():
     global current_level_index
     game_over_menu = pygame_menu.Menu('Конец игры', 800, 800,
                                       theme=pygame_menu.themes.THEME_BLUE)
-    game_over_menu.add.label(('Уровень ' + str(current_level_index + 1)),
+    game_over_menu.add.label(('Уровень ' + str(current_level_index)),
                              max_char=-1, font_size=40)
     game_over_menu.add.label('Вы умерли', max_char=-1, font_size=20)
     game_over_menu.add.button('Выйти в главное меню', main)
@@ -173,7 +173,7 @@ def entity_ai():
                 #Атака при определённых условиях
                 if (((player.x - i.x) ** 2 + (player.y - i.y) ** 2 <= 2.25
                      or i.type == "skelet")
-                    and timer % 30 == 0):
+                    and timer % 10 == 0 and random.choice([True, False])):
                     i.changeTexture("attack")
                     new_list, player = i.attack((player.x, player.y),
                                                 levels[current_level_index].obj_list,
@@ -304,7 +304,7 @@ def mainloop():
 
         #Обнуление информации о движении и атаке
         hasMoved = False
-        if timer % 15 == 0:
+        if timer % 10 == 0:
             hasAttacked = False
 
         #Обработка событий игрока

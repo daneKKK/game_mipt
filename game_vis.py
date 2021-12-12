@@ -1,5 +1,5 @@
 import pygame as pg
-import math
+import math, os
 
 def drawLevel(isOpened):
     if isOpened:
@@ -16,20 +16,63 @@ def scale_y(y):
 def scale_size(r):
     return r * 38
 
+
+def drawFirstLevel(screen):
+    background = os.path.join('resources', 'Pictures', 'Background', 'B1.png')
+    texture_surface = pg.image.load(background).convert()
+    screen.blit(texture_surface, (0, 0))
+
+    pg.font.init()
+    myFont = pg.font.SysFont('Calibri', 30)
+    textSurface = myFont.render('Передвигайтесь с помощью WASD', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400))
+
+    textSurface = myFont.render('Атакуйте с помощью ЛКМ', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height2 = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400 + height + 2))
+
+    textSurface = myFont.render('Нажмите F для смены оружия', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height3 = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400 + height + height2 + 4))
+
+    textSurface = myFont.render('ESCAPE для выхода в меню', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    screen.blit(textSurface, (400 - width // 2,
+                              400 + height + height2 + height3 + 6))
+
 class Drawer:
     def __init__(self, screen):
         self.screen = screen
 
 
     def update(self, level, player, current_level_index):
-        self.screen.fill((255, 255, 255))
+        if any ([i.living for i in level.obj_list]):
+            self.drawClosedLevel()
+        else:
+            self.drawOpenedLevel()
+
+        if current_level_index == 0:
+            drawFirstLevel(self.screen)
+
         for obj in level.obj_list:
             self.draw(obj)
         for obj in level.obj_list:
             if obj.living:
                 self.drawHPbar(obj)
         self.draw(player)
-        
+        for obj in level.obj_list:
+            if obj.living:
+                self.drawHPbar(obj)
+        self.drawPlayerHP(player)
+        self.drawWeaponIcon(player)
         pg.display.update()
 
 
@@ -60,6 +103,20 @@ class Drawer:
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
 
+    def drawHPbar(self, obj):
+        hp_rect_width = obj.health / obj.max_health * 3 * scale_size(obj.r)
+        hp_rect_coords = (scale_x(obj.x) - hp_rect_width / 2,
+                          scale_y(obj.y - obj.r) - 4,
+                          hp_rect_width, 4)
+        pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
+
+    def drawPlayerHP(self, obj):
+        hp_rect_width_red = 3 * scale_size(2)
+        hp_rect_width_green = obj.health / obj.max_health * 3 * scale_size(2)
+        pg.draw.rect(self.screen, (255, 0, 0), (2, 2,
+                                                hp_rect_width_red, 11))
+        pg.draw.rect(self.screen, (0, 255, 0), (2, 2,
+                                                hp_rect_width_green, 11))
     def draw_wall(self, obj):
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(scale_size(obj.size)), int(scale_size(obj.size))))
@@ -77,3 +134,29 @@ class Drawer:
                           scale_y(obj.y - obj.r) - 4,
                           hp_rect_width, 4)
         pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
+
+    def drawWeaponIcon(self, player):
+        sword_icon = os.path.join('resources', 'squid1.png')
+        bow_icon = os.path.join('resources', 'squid1.png')
+        if player.weapon.type == "sword":
+            pg.draw.rect(self.screen, (0, 0, 0), (600, 2, 40, 40))
+        else:
+            pg.draw.rect(self.screen, (0, 0, 0), (640, 2, 40, 40))
+
+        texture_surface = pg.image.load(sword_icon).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (32, 32))
+        self.screen.blit(texture_surface, (604, 4))
+
+        texture_surface = pg.image.load(bow_icon).convert_alpha()
+        texture_surface = pg.transform.scale(texture_surface, (32, 32))
+        self.screen.blit(texture_surface, (644, 4))
+
+    def drawOpenedLevel(self):
+        texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bcl.png')
+        texture_surface = pg.image.load(texturepath).convert()
+        self.screen.blit(texture_surface, (0, 0))
+
+    def drawClosedLevel(self):
+        texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bop.png')
+        texture_surface = pg.image.load(texturepath).convert()
+        self.screen.blit(texture_surface, (0, 0))
