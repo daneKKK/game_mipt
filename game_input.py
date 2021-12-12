@@ -84,8 +84,8 @@ def read_wall_data(line, wall_number):
     Wall <x> <y>
     s - кол-во стен в файле
     '''
-    x = line[wall_number][0]
-    y = line[wall_number][1]
+    x = line[wall_number][0] - 0.5
+    y = line[wall_number][1] - 0.5
     return Wall(x, y)
 
 
