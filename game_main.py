@@ -87,7 +87,26 @@ def checkPlayerOnLevel():
     if player.y <= player.r:
         player.y = player.r
 
-    
+def checkEntityInWalls(obj, level):
+    points = [(obj.x - obj.r / (2)**(1/2), obj.y - obj.r / (2)**(1/2)),
+              (obj.x + obj.r / (2)**(1/2), obj.y - obj.r / (2)**(1/2)),
+              (obj.x - obj.r / (2)**(1/2), obj.y + obj.r / (2)**(1/2)),
+              (obj.x + obj.r / (2)**(1/2), obj.y + obj.r / (2)**(1/2)),
+              (obj.x, obj.y - obj.r),
+              (obj.x + obj.r, obj.y),
+              (obj.x, obj.y + obj.r),
+              (obj.x - obj.r, obj.y)]
+               
+    for i in level.obj_list:
+        if i.type == "wall":
+            if i.point_in_obj(points[4]):
+                obj.y = i.y + i.size + obj.r
+            elif i.point_in_obj(points[5]):
+                obj.x = i.x - obj.r
+            elif i.point_in_obj(points[6]):
+                obj.y = i.y - obj.r
+            elif i.point_in_obj(points[7]):
+                obj.x = i.x + i.size + obj.r
 
 def createNewLevel():
     '''
@@ -137,6 +156,7 @@ def entity_ai():
                                                 levels[current_level_index].obj_list,
                                                 player)
                     levels[current_level_index].obj_list = new_list
+            checkEntityInWalls(i, levels[current_level_index])
         if i.type == "arrow":
             new_list, player = i.move(levels[current_level_index], player)
             levels[current_level_index].obj_list = new_list
@@ -240,6 +260,8 @@ def mainloop():
         if pg.key.get_pressed()[pg.K_a]:
             player.move(math.pi)
             hasMoved = True
+
+        checkEntityInWalls(player, levels[current_level_index])
 
         if hasMoved and not hasAttacked and timer % 10 == 0:
             player.changeTexture("move")
