@@ -42,7 +42,7 @@ def loadGame(filename):
     '''
     global levels
     global player
-    global current_player_index
+    global current_level_index
     filename += '.json'
     path_name = os.path.join('saves', filename)
     try:
@@ -244,13 +244,15 @@ def main():
     global load_menu
 
     #Обнуление всех игровых переменных
-    levels = []
-    player = []
-    current_level_index = 0
-    timer = 0
-    screen = []
-    drawer = []
-    main_menu = []
+#    if type(player) == "<class 'game_objects.Player'>":
+#        if player.health <= 0:    
+#            levels = []
+#            player = []
+#            current_level_index = 0
+#            timer = 0
+#            screen = []
+#            drawer = []
+#            main_menu = []
 
     #Инициализация pygame и окна
     pg.init()
@@ -297,6 +299,7 @@ def mainloop():
 
     #Есть ли враги на уровне
     anyEnemyLeft = True
+
 
     #Основной цикл
     while alive:
