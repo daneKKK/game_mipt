@@ -363,9 +363,13 @@ class ImmovableObject():
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        wall_name = random.choice(self.wall_names)
+        self.texturepath = os.path.join('resources', 'Pictures', 'Other', wall_name)
 
 class Wall(ImmovableObject):
     living = False
     type = "wall"
-    wall_name = random.choice(['wall1.png', 'wall2.png', 'wall3.png'])
-    texturepath = os.path.join('resources', 'Pictures', 'Other', wall_name)
+    wall_names = ['wall1.png', 'wall2.png', 'wall3.png']
+    #texturepath = os.path.join('resources', 'Pictures', 'Other', wall_name)
+
+
