@@ -90,7 +90,7 @@ class Entity:
         for i in obj_list:
             if self == i:
                 continue
-            if i.point_in_obj(attacked_pos):
+            if i.point_in_obj(attacked_pos) and i.living:
                 i.get_damage(self.attack_value)
         if player.point_in_obj(attacked_pos) and not (self is player):
             player.get_damage(self.attack_value)
