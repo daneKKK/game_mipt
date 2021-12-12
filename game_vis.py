@@ -165,8 +165,8 @@ class Drawer:
         pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
 
     def drawWeaponIcon(self, player):
-        sword_icon = os.path.join('resources', 'squid1.png')
-        bow_icon = os.path.join('resources', 'squid1.png')
+        sword_icon = os.path.join('resources', 'Pictures', 'Sword', 's1.png')
+        bow_icon = os.path.join('resources', 'Pictures', 'Bow', 'Bow2.png')
         if player.weapon.type == "sword":
             pg.draw.rect(self.screen, (0, 0, 0), (600, 2, 40, 40))
         else:
