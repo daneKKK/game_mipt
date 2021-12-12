@@ -1,4 +1,5 @@
 import math, json, os
+from random import uniform
 
 #Этот файл хранит информацию о всех классах
 
@@ -36,8 +37,14 @@ class Level:
 
     
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
+        '''
+        Перевод информации об уровне в строку для сохранения в формат JSON
+        '''
+        spiders = [[i.x, i.y] for i in self.obj_list if i.type == "spider"]
+        skelets = [[i.x, i.y] for i in self.obj_list if i.type == "skelet"]
+        walls = [[i.x, i.y] for i in self.obj_list if i.type == "wall"]
+        level_data = {"spiders": spiders, "skelets": skelets, "walls": walls}
+        return level_data
 
 #Подход к объектам: в целях упрощения просчёта столкновений объектов сделаем их
 #минимальный размер, равный 0.5
@@ -46,21 +53,60 @@ class Entity:
     '''
     Класс всех живых объектов.
     '''
+    #Координаты
     x = 0
     y = 0
+
+    #Размер
     r = 0.5
+
+    #Здоровье
+    max_health = 10
     health = 10
+
+    #Скорость
     speed = 1 / 30
+
+    #Угол поворота
     facing_angle = 0
+
+    #Информация об атаках
     attack_value = 1
     attack_speed = 30
+
+    #Является ли живым
     living = True
-    texture = None
+
+    #Пусть к текстурам объекта
+    #Текстуры движения
+    texturepath1 = os.path.join('resources', 'face.png')
+    texturepath2 = os.path.join('resources', 'face.png')
+    #Текстура атаки
+    texturepath_atk = os.path.join('resources', 'face.png')
+    #Текущая текстура
     texturepath = os.path.join('resources', 'face.png')
 
     def __init__(self, x, y):
+        '''
+        Инициализация. Координаты x, y в пределах от 0 до 19.(9)
+        '''
         self.x = x
         self.y = y
+
+    def changeTexture(self, action):
+        '''
+        Смена текущей текстуры в зависимости от движения:
+        action = "attack" - смена на текстуру атаки,
+        action = "move" - поочерёдная смена двух тектур движения
+        '''
+        if action == "attack":
+            self.texturepath = self.texturepath_atk
+        elif action == "move":
+            if self.texturepath == self.texturepath1:
+                self.texturepath = self.texturepath2
+            else:
+                self.texturepath = self.texturepath1
+            
 
     def attack(self, attacked_pos, obj_list, player):
         '''
@@ -72,7 +118,7 @@ class Entity:
         for i in obj_list:
             if self == i:
                 continue
-            if i.point_in_obj(attacked_pos):
+            if i.point_in_obj(attacked_pos) and i.living:
                 i.get_damage(self.attack_value)
         if player.point_in_obj(attacked_pos) and not (self is player):
             player.get_damage(self.attack_value)
@@ -110,15 +156,17 @@ class Entity:
         '''
         self.facing_angle = angle
 
-    def draw(self, screen):
-        pass
 
 class Spider(Entity):
     '''
     Класс Паук. Наследует от Entity
     '''
     type = "spider"
-    texture = None
+    texturepath1 = os.path.join('resources', 'Pictures', 'Spider', 's1.png')
+    texturepath2 = os.path.join('resources', 'Pictures', 'Spider', 's2.png')
+    texturepath_atk = os.path.join('resources', 'Pictures', 'Spider', 's5.png')
+    texturepath = os.path.join('resources', 'Pictures', 'Spider', 's1.png')
+    speed = 3 / 30
 
 
 
@@ -127,6 +175,11 @@ class Skelet(Entity):
     Скелет-лучник. Наследует от Entity. Атакует издалека.
     '''
     type = "skelet"
+    texturepath1 = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
+    texturepath2 = os.path.join('resources', 'Pictures', 'Enemy', 'e6.png')
+    texturepath_atk = os.path.join('resources', 'Pictures', 'Enemy', 'e1.png')
+    texturepath = os.path.join('resources', 'Pictures', 'Enemy', 'e2.png')
+    max_health = 15
     health = 15
     speed = 1 / 30
     attack_value = 2
@@ -143,7 +196,7 @@ class Skelet(Entity):
         new_arrow = Arrow()
         new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
         new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
-        new_arrow.angle = self.facing_angle
+        new_arrow.angle = self.facing_angle + uniform(-0.2, 0.2)
         new_arrow.damage = self.attack_value
         obj_list += [new_arrow]
         return obj_list, player
@@ -153,7 +206,7 @@ class Weapon:
     Класс оружия.
     '''
     attack_value = 1
-    reach = 1.5
+    reach = 2
     def attack(self, attack_position, obj_list):
         '''
         Атака оружия.
@@ -172,6 +225,8 @@ class Sword(Weapon):
     '''
     Меч. Наследует от Weapon.
     '''
+    type = "sword"
+    attack_value = 3
     def attack(self, attack_position, obj_list):
         '''
         Атака мечом. Аналогично Weapon.attack()
@@ -183,23 +238,79 @@ class Sword(Weapon):
                 i.get_damage(self.attack_value)
         return obj_list
 
+class Bow(Weapon):
+    '''
+    Лук. Наследует от Weapon.
+    '''
+    type = "bow"
+    attack_value = 1
+    def attack(self, attacked_pos, obj_list):
+        '''
+        Особенный вид атаки - издалека.
+        attacked_pos - точка, в которую наносится урон.
+        obj_list, player - список объектов.
+        '''
+        
+        new_arrow = Arrow()
+        new_arrow.x = self.x + (self.r + 0.02) * math.cos(self.facing_angle)
+        new_arrow.y = self.y + (self.r + 0.02) * math.sin(self.facing_angle)
+        new_arrow.angle = self.facing_angle
+        new_arrow.damage = self.attack_value
+        obj_list += [new_arrow]
+        return obj_list
+    
+
 
 class Player(Entity):
     '''
     Класс игрока. Наследует от Entity. Подразумевается, что может менять оружие
     через переменную weapon.
     '''
-    weapon = Sword()
+    weapon = Bow()
     speed = 0.1
+    texturepath1 = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
+    texturepath2 = os.path.join('resources', 'Pictures','Main ch', 'm1_2.png')
+    texturepath_atk1 = os.path.join('resources', 'Pictures','Main ch', 'm4.png')
+    texturepath_atk2 = os.path.join('resources', 'Pictures','Main ch', 'm2.png')
+    texturepath = os.path.join('resources', 'Pictures','Main ch', 'm1.png')
+
+    def changeTexture(self, action):
+        '''
+        Та же самая смена текстуры, но атакующая текстура зависит от текущего
+        оружия
+        '''
+        if action == "attack":
+            if self.weapon.type == "sword":
+                self.texturepath = self.texturepath_atk1
+            else:
+                self.texturepath = self.texturepath_atk2
+        elif action == "move":
+            if self.texturepath == self.texturepath1:
+                self.texturepath = self.texturepath2
+            else:
+                self.texturepath = self.texturepath1
+    
     def attack(self, attack_position, obj_list):
         '''
         Атака через оружие игрока
         '''
+        self.weapon.facing_angle = self.facing_angle
+        self.weapon.x = self.x
+        self.weapon.y = self.y
+        self.weapon.r = self.r
         return self.weapon.attack(attack_position, obj_list)
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
+    def toJSON(self, current_level_index):
+        '''
+        Перевод в строку для сохранения в JSON
+        '''
+        player_data = {"health": self.health,
+                       "current_level": current_level_index,
+                       "x": self.x,
+                       "y": self.y,
+                       "current_weapon is sword": self.weapon.type == "sword"
+                       }
+        return player_data
 
     
 class Arrow:
@@ -209,10 +320,10 @@ class Arrow:
     type = "arrow"
     x = 0
     y = 0
-    r = 0.1
+    r = 0.2
     angle = 0
     damage = 1
-    speed = 5 / 30
+    speed = 9 / 30
     living = False
     texturepath = os.path.join('resources', 'squid1.png')
 
@@ -263,11 +374,16 @@ class Arrow:
         return obj_list, player
 
     def point_in_obj(self, pos):
+        '''
+        Этот метод нужен для единообразия с остальными классами
+        '''
         return False
             
 class ImmovableObject():
     '''
     Недвижимый объект (например, стена).
+    Важно: центром объекта является точка self.x + (1/2)*self.size (аналогично
+    для y), а (self.x, self.y) - лишь угол объекта
     '''
     living = False
     x = 0
@@ -277,16 +393,26 @@ class ImmovableObject():
     living = False
 
     def point_in_obj(self, point):
+        '''
+        Проверка на нахождение точки внутри объекта.
+        point - кортеж двух чисел
+        '''
         x, y = point
         return ((0 <= x - self.x) and (x - self.x <= self.size) and
                 (0 <= y - self.y) and (y - self.y <= self.size))
 
 
     def __init__(self, x, y):
+        '''
+        Инициализация.
+        '''
         self.x = x
         self.y = y
 
 class Wall(ImmovableObject):
+    '''
+    Стена
+    '''
     living = False
     type = "wall"
-    texturepath = os.path.join('resources', 'face_clicked.png')
+    texturepath = os.path.join('resources', 'face.png')
