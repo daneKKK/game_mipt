@@ -66,7 +66,6 @@ class Drawer:
         self.current_index = current_level_index
 
         if len(self.optimized_walls) <= current_level_index:
-            print('debug')
             wall_counter = 0
             for i in level.obj_list:
                 if i.type == "wall":
