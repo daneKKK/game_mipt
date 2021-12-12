@@ -1,5 +1,5 @@
 import pygame as pg
-import math
+import math, os
 
 def drawLevel(isOpened):
     if isOpened:
@@ -16,6 +16,38 @@ def scale_y(y):
 def scale_size(r):
     return r * 38
 
+
+def drawFirstLevel(screen):
+    background = os.path.join('resources', 'Pictures', 'Background', 'B1.png')
+    texture_surface = pg.image.load(background).convert()
+    screen.blit(texture_surface, (0, 0))
+
+    pg.font.init()
+    myFont = pg.font.SysFont('Calibri', 30)
+    textSurface = myFont.render('Передвигайтесь с помощью WASD', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400))
+
+    textSurface = myFont.render('Атакуйте с помощью ЛКМ', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height2 = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400 + height + 2))
+
+    textSurface = myFont.render('Нажмите F для смены оружия', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    height3 = textSurface.get_height()
+    screen.blit(textSurface, (400 - width // 2, 400 + height + height2 + 4))
+
+    textSurface = myFont.render('ESCAPE для выхода в меню', False,
+                                (255, 255, 255))
+    width = textSurface.get_width()
+    screen.blit(textSurface, (400 - width // 2,
+                              400 + height + height2 + height3 + 6))
+
 class Drawer:
     def __init__(self, screen):
         self.screen = screen
@@ -26,6 +58,10 @@ class Drawer:
             self.drawClosedLevel()
         else:
             self.drawOpenedLevel()
+
+        if current_level_index == 0:
+            drawFirstLevel(self.screen)
+
         for obj in level.obj_list:
             self.draw(obj)
         for obj in level.obj_list:
