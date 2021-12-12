@@ -1,4 +1,4 @@
-## Описание игры " Endless Dungeon "
+## Hopeless Dungeon
 
 ## Оглавление
 1. Идея игры и геймлей.
