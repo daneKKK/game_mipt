@@ -1,0 +1,14 @@
+[
+    {
+        "spiders": [],
+        "skelets": [],
+        "walls": []
+    },
+    {
+        "health": 10,
+        "current_level": 0,
+        "x": 10,
+        "y": 1,
+        "current_weapon is sword": false
+    }
+]
