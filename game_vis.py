@@ -73,6 +73,8 @@ class Drawer:
                 self.drawHPbar(obj)
         self.drawPlayerHP(player)
         self.drawWeaponIcon(player)
+        self.drawLevelNumber(current_level_index)
+        
         pg.display.update()
 
 
@@ -150,6 +152,16 @@ class Drawer:
         texture_surface = pg.image.load(bow_icon).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (32, 32))
         self.screen.blit(texture_surface, (644, 4))
+
+    def drawLevelNumber(self, current_level_index):
+        if current_level_index > 0:
+            text = "Уровень: " + str(current_level_index)
+        else:
+            text = "Обучение"
+        myFont = pg.font.SysFont('Calibri', 30)
+        text_surface = myFont.render(text, False, (255, 255, 255))
+        width = text_surface.get_width()
+        self.screen.blit(text_surface, (400 - width // 2, 2))
 
     def drawOpenedLevel(self):
         texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bcl.png')
