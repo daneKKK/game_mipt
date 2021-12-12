@@ -73,15 +73,22 @@ def checkPlayerOnLevel():
     global player
     global current_level_index
     global levels
-    if player.x >= 9.5 and player.x <= 10.5 and player.y >= 19:
+
+    #Переход игрока на другой уровень, если он рядом с дверьми
+    if player.x >= 9.5 and player.x <= 10.5 and player.y >= 19 and not anyEnemyLeft:
         current_level_index += 1
         player.y = 1.01
-    if player.x >= 9.5 and player.x <= 10.5 and player.y <= 1:
+    if player.x >= 9.5 and player.x <= 10.5 and player.y <= 1 and not anyEnemyLeft:
         if current_level_index > 0:
             current_level_index -= 1
             player.y = 18.99
+            
+    #Создание нового уровня, если индекс текущего уровня выходит за пределы массива
+    #уровней
     if current_level_index + 1 > len(levels):
         createNewLevel()
+
+    #Удержание игрока в пределах уровня    
     if player.x >= 20 - player.r:
         player.x = 20 - player.r
     if player.x <= player.r:
@@ -283,13 +290,13 @@ def mainloop():
     hasMoved = False
     hasAttacked = False
 
+    #Есть ли враги на уровне
+    anyEnemyLeft = True
+
     #Основной цикл
     while alive:
-        #Обнуление замеченных врагов
-        anyEnemyLeft = False
-
         #Проверка на нахождение игрока в пределах уровня
-        checkPlayerOnLevel()
+        checkPlayerOnLevel(anyEnemyLeft)
 
         #Обнуление информации о движении и атаке
         hasMoved = False
