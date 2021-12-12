@@ -393,10 +393,10 @@ class ImmovableObject():
     living = False
 
     def point_in_obj(self, point):
-    '''
-    Проверка на нахождение точки внутри объекта.
-    point - кортеж двух чисел
-    '''
+        '''
+        Проверка на нахождение точки внутри объекта.
+        point - кортеж двух чисел
+        '''
         x, y = point
         return ((0 <= x - self.x) and (x - self.x <= self.size) and
                 (0 <= y - self.y) and (y - self.y <= self.size))
