@@ -2,16 +2,28 @@ import pygame as pg
 import math, os
 
 def scale_x(x):
+    '''
+    функция смещает координату х по рабочему полю экрана
+    '''
     return 20 + x * 38
 
 def scale_y(y):
+    '''
+    функция смещает координату y по рабочему полю экрана
+    '''
     return 20 + y * 38
 
 def scale_size(r):
+    '''
+    функция увеличивает размер объекта
+    '''
     return r * 38
 
 
 def drawFirstLevel(screen):
+    '''
+    функция описывает нулевой уровень - Обучение
+    '''
     background = os.path.join('resources', 'Pictures', 'Background', 'B1.png')
     texture_surface = pg.image.load(background).convert()
     screen.blit(texture_surface, (0, 0))
@@ -43,15 +55,23 @@ def drawFirstLevel(screen):
                               400 + height + height2 + height3 + 6))
 
 class Drawer:
-
+    '''
+    класс функций, которые рисуют объекты
+    '''
     optimized_walls = []
     wall_optimizing = False
     
     def __init__(self, screen):
+        '''
+        функция указывает на экран, на котором будут нарисованы объекты
+        '''
         self.screen = screen
 
 
     def update(self, level, player, current_level_index):
+        '''
+        функция, которая рисует всё на экране
+        '''
         if any ([i.living for i in level.obj_list]):
             self.drawClosedLevel()
         else:
@@ -87,9 +107,10 @@ class Drawer:
         
         pg.display.update()
 
-
-
     def draw(self, obj):
+        '''
+        функция рисует объект в зависимости от его типа
+        '''
         if obj.living:
             self.draw_entity(obj)
         elif obj.type == "wall":
@@ -110,6 +131,9 @@ class Drawer:
         return rot_image
 
     def draw_entity(self, obj):
+        '''
+        функция рисует объекты типа entity (все живые объекты, кроме игрока)
+        '''
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(3 * scale_size(obj.r)), int(3 * scale_size(obj.r))))
         texture_surface = self.rot_center(texture_surface, obj.facing_angle)
@@ -117,6 +141,9 @@ class Drawer:
                                            scale_y(obj.y - obj.r  * 1.5)))
 
     def drawHPbar(self, obj):
+        '''
+        функция рисует объекты типа entity
+        '''
         hp_rect_width = obj.health / obj.max_health * 3 * scale_size(obj.r)
         hp_rect_coords = (scale_x(obj.x) - hp_rect_width / 2,
                           scale_y(obj.y - obj.r) - 4,
@@ -124,6 +151,9 @@ class Drawer:
         pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
 
     def drawPlayerHP(self, obj):
+        '''
+        функция рисует шкалу жизни игрока
+        '''
         hp_rect_width_red = 3 * scale_size(2)
         hp_rect_width_green = obj.health / obj.max_health * 3 * scale_size(2)
         pg.draw.rect(self.screen, (255, 0, 0), (2, 2,
@@ -131,6 +161,9 @@ class Drawer:
         pg.draw.rect(self.screen, (0, 255, 0), (2, 2,
                                                 hp_rect_width_green, 11))
     def draw_wall(self, obj):
+        '''
+        функция, рисующая стены
+        '''
         if self.wall_optimizing:
             self.draw_optimized_wall(obj)
             return
@@ -139,6 +172,9 @@ class Drawer:
         self.screen.blit(texture_surface, (scale_x(obj.x), scale_y(obj.y)))
 
     def draw_optimized_wall(self, obj):
+        '''
+        функция, оптимизирующая изображение стен (для уменьшения подвисаний игры)
+        '''
         pg.draw.rect(self.screen, (150, 150, 150), (scale_x(obj.x),
                                                     scale_y(obj.y),
                                                     scale_size(obj.size),
@@ -146,17 +182,13 @@ class Drawer:
         
 
     def draw_arrow(self, obj):
+        '''
+        функция,
+        '''
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
         texture_surface = self.rot_center(texture_surface, obj.angle)
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
-        
-    def drawHPbar(self, obj):
-        hp_rect_width = obj.health / obj.max_health * 3 * scale_size(obj.r)
-        hp_rect_coords = (scale_x(obj.x) - hp_rect_width / 2,
-                          scale_y(obj.y - obj.r) - 4,
-                          hp_rect_width, 4)
-        pg.draw.rect(self.screen, (0, 255, 0), hp_rect_coords)
 
     def drawWeaponIcon(self, player):
         sword_icon = os.path.join('resources', 'Pictures', 'Sword', 's1.png')
