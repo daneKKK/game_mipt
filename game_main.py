@@ -139,7 +139,7 @@ def setPlayer():
     '''
     global player
 
-    player = Player(10, 1)
+    player = Player(10, 15)
 
 def entity_ai():
     '''
@@ -192,7 +192,7 @@ def mainMenu():
     '''
     Функция, создающая главное меню.
     '''
-    menu = pygame_menu.Menu('Главное меню', 800, 800,
+    menu = pygame_menu.Menu('Hopeless Dungeon', 800, 800,
                             theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Играть', mainloop)
     menu.add.button('Сохранить', save_menu)
