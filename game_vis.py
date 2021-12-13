@@ -183,7 +183,7 @@ class Drawer:
 
     def draw_arrow(self, obj):
         '''
-        функция,
+        функция, рисующая стрелу
         '''
         texture_surface = pg.image.load(obj.texturepath).convert_alpha()
         texture_surface = pg.transform.scale(texture_surface, (int(2 * scale_size(obj.r)), int(2 * scale_size(obj.r))))
@@ -191,6 +191,9 @@ class Drawer:
         self.screen.blit(texture_surface, (scale_x(obj.x - obj.r), scale_y(obj.y - obj.r)))
 
     def drawWeaponIcon(self, player):
+        '''
+        функция, рисующая иконки оружия игрока
+        '''
         sword_icon = os.path.join('resources', 'Pictures', 'Sword', 's1.png')
         bow_icon = os.path.join('resources', 'Pictures', 'Bow', 'Bow2.png')
         if player.weapon.type == "sword":
@@ -207,6 +210,9 @@ class Drawer:
         self.screen.blit(texture_surface, (644, 4))
 
     def drawLevelNumber(self, current_level_index):
+        '''
+        функция, рисующая номер уровня или слово "Обучение" для нулевого
+        '''
         if current_level_index > 0:
             text = "Уровень: " + str(current_level_index)
         else:
@@ -217,11 +223,17 @@ class Drawer:
         self.screen.blit(text_surface, (400 - width // 2, 2))
 
     def drawOpenedLevel(self):
+        '''
+        функция, открытый уровень (если уровень пройден)
+        '''
         texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bcl.png')
         texture_surface = pg.image.load(texturepath).convert()
         self.screen.blit(texture_surface, (0, 0))
 
     def drawClosedLevel(self):
+        '''
+        функция, рисующая закрытый уровень (если он ещё не пройден)
+        '''
         texturepath = os.path.join('resources', 'Pictures', 'Background', 'Bop.png')
         texture_surface = pg.image.load(texturepath).convert()
         self.screen.blit(texture_surface, (0, 0))
